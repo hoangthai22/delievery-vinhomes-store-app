@@ -35,7 +35,7 @@ class LandingScreen extends StatelessWidget {
         child: ElevatedButton(
           child: Text("Next"),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/welcome');
+            Navigator.pushReplacementNamed(context, '/login');
           },
         ),
       ),
