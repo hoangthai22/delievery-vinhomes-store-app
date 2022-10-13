@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:store_app/constants/Theme.dart';
 import 'package:store_app/routes.dart';
 import 'package:store_app/screens/home_screen.dart';
 import 'package:store_app/screens/login_screen.dart';
@@ -17,7 +18,13 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       onGenerateRoute: RouteGenerator.generateRoute,
       title: 'Flutter Demo',
-      theme: ThemeData(fontFamily: 'SF Regular'),
+      theme: ThemeData(
+          scaffoldBackgroundColor: MaterialColors.grey,
+          fontFamily: 'SF Regular',
+          inputDecorationTheme: InputDecorationTheme(
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: MaterialColors.primary)),
+          )),
     );
   }
 }

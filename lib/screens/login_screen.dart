@@ -16,6 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _controllerUserName = TextEditingController();
   final _controllerPass = TextEditingController();
   String _textUserName = '';
+  bool _validUserName = true;
   String _textPass = '';
   String? _errorText(TextEditingController controller) {
     // at any time, we can get the text from _controller.value.text
@@ -33,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _entryField(
-      String title, String error, TextEditingController controller, String text,
+      String title, String error, TextEditingController controller,
       {bool isPassword = false}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
@@ -50,7 +51,13 @@ class _LoginScreenState extends State<LoginScreen> {
           SizedBox(
             height: 10,
           ),
-          TextField(
+          TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return error;
+                }
+                return null;
+              },
               controller: controller,
               onChanged: (e) => {
                     if (controller == _controllerUserName)
@@ -64,7 +71,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
               obscureText: isPassword,
               decoration: InputDecoration(
-                  errorText: _errorText(controller),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 0,
+                      style: BorderStyle.none,
+                    ),
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide(
@@ -84,13 +96,15 @@ class _LoginScreenState extends State<LoginScreen> {
       key: _formKey,
       child: Column(
         children: <Widget>[
-          _entryField("Tên đăng nhập", "Vui lòng nhập tên đăng nhập",
-              _controllerUserName, _textUserName),
+          _entryField(
+            "Tên đăng nhập",
+            "Vui lòng nhập tên đăng nhập",
+            _controllerUserName,
+          ),
           _entryField(
             "Mật khẩu",
             "Vui lòng nhập mật khẩu",
             _controllerPass,
-            _textPass,
             isPassword: true,
           ),
         ],
@@ -101,10 +115,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _submitButton() {
     return InkWell(
       onTap: () {
-        if (_controllerPass.value.text.isNotEmpty &&
-            _controllerUserName.value.text.isNotEmpty &&
-            _controllerPass.value.text.length > 6) {
+        if (_formKey.currentState!.validate()) {
           Navigator.pushNamed(context, '/home');
+          print("_textUserName: " + _textUserName);
+          print("_textPass: " + _textPass);
         }
       },
       child: Container(

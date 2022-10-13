@@ -38,6 +38,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   overlay_support: ^1.2.1
   google_fonts: ^3.0.1
+  intl: ^0.17.0
+  flutter_spinkit: ^5.1.0
+  editable_image: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -91,8 +94,13 @@ flutter:
     - family: SF Regular
       fonts:
         - asset: assets/fonts/SF-Pro-Rounded-Regular.ttf
-        # - asset: assets/fonts/SF-Pro-Rounded-Semibold.ttf
-        # - asset: assets/fonts/SF-Pro-Rounded-Medium.ttf
+      
+    - family: SF Semibold
+      fonts:
+        - asset: assets/fonts/SF-Pro-Rounded-Semibold.ttf
+    - family: SF Medium
+      fonts:
+        - asset: assets/fonts/SF-Pro-Rounded-Medium.ttf
     - family: SF Heavy
       fonts:
         - asset: assets/fonts/SF-Pro-Rounded-Heavy.ttf
