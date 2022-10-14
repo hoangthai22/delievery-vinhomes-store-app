@@ -6,8 +6,9 @@ import 'package:store_app/widgets/product/product_item.dart';
 
 class ProductList extends StatefulWidget {
   List<ProductModel> productList = [];
-
-  ProductList({Key? key, required this.productList}) : super(key: key);
+  final Function(ProductModel product)? onTap;
+  ProductList({Key? key, required this.productList, required this.onTap})
+      : super(key: key);
 
   @override
   _ProductListState createState() => _ProductListState();
@@ -21,14 +22,8 @@ class _ProductListState extends State<ProductList> {
       children: [
         if (widget.productList.length > 0)
           ...widget.productList.map(
-            (ProductModel pro) => ProductItem(
-              image: pro.image,
-              // ? pro.image
-              // : "https://firebasestorage.googleapis.com/v0/b/lucky-science-341916.appspot.com/o/assets%2FImagesProducts%2Fa9bf8b5b-f24e-4452-92af-bfcd779983ff?alt=media&token=f17ac3db-4684-4e12-9262-98b2c94b2e57",
-              productName: pro.name,
-              productDes: pro.unit,
-              productPrice: pro.pricePerPack,
-            ),
+            (ProductModel pro) =>
+                ProductItem(product: pro, onTap: (pro) => {widget.onTap!(pro)}),
           )
       ],
     ));

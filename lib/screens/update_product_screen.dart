@@ -1,97 +1,169 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:store_app/apis/apiService.dart';
 import 'package:store_app/constants/Theme.dart';
 import 'package:store_app/models/categoryModel.dart';
 import 'package:store_app/models/productModel.dart';
-import 'package:store_app/screens/select_photo_options_screen.dart';
+import 'package:store_app/models/unitModel.dart';
 import 'package:store_app/widgets/accordion/accordion.dart';
-import 'package:store_app/apis/apiService.dart';
-import 'package:store_app/widgets/upload/re_usable_select_photo_button.dart';
-import 'package:dotted_border/dotted_border.dart';
+import 'package:http/http.dart' as http;
 
-class NewProductScreen extends StatefulWidget {
-  const NewProductScreen({Key? key}) : super(key: key);
+class UpdateProductScreen extends StatefulWidget {
+  final ProductModel productModel;
+  const UpdateProductScreen({Key? key, required this.productModel})
+      : super(key: key);
 
   @override
-  _NewProductScreenState createState() => _NewProductScreenState();
+  _UpdateProductScreenState createState() => _UpdateProductScreenState();
 }
 
-class _NewProductScreenState extends State<NewProductScreen> {
+class _UpdateProductScreenState extends State<UpdateProductScreen> {
   List<CategoryModel> listCategory = [];
-  List listUnit = [
-    {"id": "1", "value": "Kg"},
-    {"id": "2", "value": "Ly"},
-    {"id": "3", "value": "Chai"},
-    {"id": "4", "value": "Gam"},
-    {"id": "5", "value": "Hộp"},
-    {"id": "6", "value": "Hủ"},
-    {"id": "7", "value": "Cái"},
+  List<UnitModel> listUnit = [
+    UnitModel(id: "1", value: "Kg"),
+    UnitModel(id: "2", value: "Ly"),
+    UnitModel(id: "3", value: "Chai"),
+    UnitModel(id: "4", value: "Gam"),
+    UnitModel(id: "5", value: "Hộp"),
+    UnitModel(id: "6", value: "Hủ"),
+    UnitModel(id: "7", value: "Cái"),
   ];
+  // {id: "1", value: "Kg"},
+  // {"id": "2", "value": "Ly"},
+  // {"id": "3", "value": "Chai"},
+  // {"id": "4", "value": "Gam"},
+  // {"id": "5", "value": "Hộp"},
+  // {"id": "6", "value": "Hủ"},
+  // {"id": "7", "value": "Cái"},
+
   final _formKey = GlobalKey<FormState>();
   File? _image;
   bool valid = false;
   bool validImage = true;
+  bool isLoadingSubmit = false;
+  String isImage = "";
   String _category = '';
   String _unit = '';
-  String _name = '';
-  double _pricePerPack = 0;
-  final _controllerPricePerPack = TextEditingController();
-  String _price = '';
-  double _packNetWeight = 0;
-  double _maximumQuantity = 0;
-  double _minimumQuantity = 0;
-  double _minimumDeIn = 0;
-  String _packDescription = "";
+  // String _name = '';
+  TextEditingController _name = TextEditingController();
+  // TextEditingController _unit = TextEditingController();
+  // double _pricePerPack = 0;
+  TextEditingController _pricePerPack = TextEditingController();
+  TextEditingController _packNetWeight = TextEditingController();
+  TextEditingController _maximumQuantity = TextEditingController();
+  TextEditingController _minimumQuantity = TextEditingController();
+  TextEditingController _minimumDeIn = TextEditingController();
+  TextEditingController _packDescription = TextEditingController();
+  // String _price = '';
+  // double _packNetWeight = 0;
+  // double _maximumQuantity = 0;
+  // double _minimumQuantity = 0;
+  // double _minimumDeIn = 0;
+  // String _packDescription = "";
   void initState() {
     super.initState();
+    final currencyFormatter = NumberFormat('##0', 'ID');
     ApiServices.getListCategory(1, 100).then((value) => {
           if (value != null)
             {
               setState(() {
                 listCategory = value;
+                _name.text = widget.productModel.name ?? "";
+                _packDescription.text =
+                    widget.productModel.packDescription ?? "";
+                _pricePerPack.text = currencyFormatter
+                    .format((widget.productModel.pricePerPack!).toInt())
+                    .toString();
+                _packNetWeight.text = currencyFormatter
+                    .format((widget.productModel.packNetWeight!).toInt())
+                    .toString();
+                _maximumQuantity.text = currencyFormatter
+                    .format((widget.productModel.maximumQuantity!).toInt())
+                    .toString();
+                _minimumQuantity.text = currencyFormatter
+                    .format((widget.productModel.minimumQuantity!).toInt())
+                    .toString();
+                _minimumDeIn.text = currencyFormatter
+                    .format((widget.productModel.minimumDeIn!).toInt())
+                    .toString();
+                _unit = widget.productModel.unit.toString();
+                print("_unit " + _unit);
+                _category = widget.productModel.categoryId.toString();
+                isImage = widget.productModel.image.toString();
               })
             }
         });
   }
 
-  void hanldeSubmit() {
+  @override
+  void dispose() {
+    // _controller.dispose();
+    _unit = "";
+    // scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> hanldeUpdate() async {
+    // print(img64);
+    print("_category" + _category);
+    print("_unit" + _unit);
+    print("_name" + _name.text);
+    print("_pricePerPack" + _pricePerPack.text);
+    // print("_price" + _price);
+    print("_packNetWeight" + _packNetWeight.toString());
+    print("_maximumQuantity" + _maximumQuantity.toString());
+    print("_minimumQuantity" + _minimumQuantity.toString());
+    print("_minimumDeIn" + _minimumDeIn.toString());
+    print("_packDescription" + _packDescription.toString());
+    var img64 = null;
+    var base64String = null;
+    setState(() {
+      isLoadingSubmit = true;
+    });
     if (_image != null) {
       var bytes = File(_image!.path).readAsBytesSync();
-      String img64 = base64Encode(bytes);
-      print(img64);
-      print("_category" + _category);
-      print("_unit" + _unit);
-      print("_name" + _name);
-      print("_pricePerPack" + _pricePerPack.toString());
-      print("_price" + _price);
-      print("_packNetWeight" + _packNetWeight.toString());
-      print("_maximumQuantity" + _maximumQuantity.toString());
-      print("_minimumQuantity" + _minimumQuantity.toString());
-      print("_minimumDeIn" + _minimumDeIn.toString());
-      print("_packDescription" + _packDescription.toString());
-      ProductModel product = ProductModel(
-          image: img64 ?? "",
-          name: _name,
-          categoryId: _category,
-          packNetWeight: _packNetWeight ?? 0.0,
-          packDescription: _packDescription ?? "",
-          maximumQuantity: _maximumQuantity ?? 1.0,
-          minimumQuantity: _minimumQuantity ?? 1.0,
-          minimumDeIn: _minimumDeIn ?? 1.0,
-          unit: _unit ?? "",
-          pricePerPack: _pricePerPack ?? 0.0,
-          storeId: "s4",
-          rate: 0.0,
-          description: "");
-      ApiServices.postCreateProduct(product).then((value) => {
-            if (value != null) {Navigator.pop(context)}
-          });
+      img64 = base64Encode(bytes);
+    } else if (isImage != "") {
+      http.Response imageResponse = await http.get(
+        Uri.parse(isImage),
+      );
+      base64String = base64.encode(imageResponse.bodyBytes);
     }
+
+    ProductModel product = ProductModel(
+        image: img64 ?? base64String,
+        name: _name.text,
+        categoryId: _category,
+        packNetWeight: double.parse(_packNetWeight.text) ?? 0.0,
+        packDescription: _packDescription.text ?? "",
+        maximumQuantity: double.parse(_maximumQuantity.text) ?? 1.0,
+        minimumQuantity: double.parse(_minimumQuantity.text) ?? 1.0,
+        minimumDeIn: double.parse(_minimumDeIn.text) ?? 1.0,
+        unit: _unit ?? "",
+        pricePerPack: double.parse(_pricePerPack.text) ?? 0.0,
+        storeId: "s4",
+        rate: 0.0,
+        description: "");
+    print("iamge: " + product.image.toString());
+    print(widget.productModel.id);
+    ApiServices.putUpdateProduct(product, widget.productModel.id ?? "")
+        .then((value) => {
+              if (value != null)
+                {
+                  setState(() {
+                    isLoadingSubmit = false;
+                  }),
+                  Navigator.pop(context)
+                }
+            });
   }
 
   Future _pickImage(ImageSource source) async {
@@ -103,6 +175,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
       setState(() {
         _image = img;
         validImage = true;
+        print("img " + img.toString());
 
         // Navigator.of(context).pop();
       });
@@ -191,6 +264,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                 onTap: () {
                                   setState(() {
                                     _image = null;
+                                    isImage = "";
                                   });
                                 },
                                 child: Container(
@@ -210,7 +284,44 @@ class _NewProductScreenState extends State<NewProductScreen> {
                             )
                           ],
                         ),
-                      if (_image == null)
+                      if (_image == null && isImage != "")
+                        Stack(
+                          children: [
+                            Container(
+                                margin: EdgeInsets.only(
+                                    left: 10, bottom: 10, top: 10),
+                                width: 165,
+                                height: 155,
+                                // color: Colors.amber,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      // width: 100,
+                                      child: ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(8),
+                                            bottomLeft: Radius.circular(8),
+                                            topRight: Radius.circular(8),
+                                            bottomRight: Radius.circular(8),
+                                          ),
+
+                                          // padding: const EdgeInsets.only(right: 15, left: 0),
+                                          child: isImage != null
+                                              ? Image(
+                                                  // color:70olors.red,
+                                                  height: 150,
+                                                  width: 150,
+                                                  fit: BoxFit.cover,
+                                                  image: NetworkImage(isImage))
+                                              : Container()),
+                                    ),
+                                  ],
+                                )),
+                          ],
+                        ),
+                      if (_image == null && isImage == "")
                         Stack(
                           children: [
                             Container(
@@ -385,9 +496,13 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                 hintStyle: TextStyle(fontSize: 16),
                                 hintText: 'Ví dụ: Cơm Tấm',
                               ),
-                              // controller: controller,
+                              controller: _name,
+                              // controller: _name != null
+                              //     ? TextEditingController(text: _name)
+                              //     : null,
+                              // initialValue: _name != null ? _name : null,
                               onChanged: (e) => {
-                                setState(() => {_name = e})
+                                // setState(() => {_name.text = e})
                               },
                               // obscureText: isPassword,
                             ),
@@ -420,6 +535,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                           ),
                                         ),
                                         TextFormField(
+                                          controller: _pricePerPack,
                                           keyboardType: TextInputType.number,
                                           validator: (value) {
                                             if (value == null ||
@@ -432,15 +548,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                             hintStyle: TextStyle(fontSize: 16),
                                             hintText: '0.000',
                                           ),
-                                          onChanged: (e) => {
-                                            if (e != "")
-                                              {
-                                                setState(() => {
-                                                      _pricePerPack =
-                                                          double.parse(e)
-                                                    })
-                                              }
-                                          },
+                                          onChanged: (e) => {},
                                           // obscureText: isPassword,
                                         )
                                       ],
@@ -494,9 +602,9 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                           },
                                           items: listUnit.map((value) {
                                             return DropdownMenuItem<String>(
-                                              value: value["value"],
-                                              child: Text(
-                                                  value["value"].toString()),
+                                              value: value.value,
+                                              child:
+                                                  Text(value.value.toString()),
                                             );
                                           }).toList(),
                                         ),
@@ -549,6 +657,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                           isDense: true,
                                           onChanged: (value) {
                                             setState(() {
+                                              print(value);
                                               _category = value!;
                                               if (value.isEmpty) {
                                                 valid = false;
@@ -611,16 +720,8 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                                 hintText:
                                                     'Ví dụ: 1 Ly, 500g,...',
                                               ),
-                                              // controller: controller,
-                                              onChanged: (e) => {
-                                                if (e != "")
-                                                  {
-                                                    setState(() => {
-                                                          _packNetWeight =
-                                                              double.parse(e)
-                                                        })
-                                                  }
-                                              },
+                                              controller: _packNetWeight,
+                                              onChanged: (e) => {},
                                               // obscureText: isPassword,
                                             )
                                           ],
@@ -651,16 +752,8 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                                     TextStyle(fontSize: 16),
                                                 hintText: '0',
                                               ),
-                                              // controller: controller,
-                                              onChanged: (e) => {
-                                                if (e != "")
-                                                  {
-                                                    setState(() => {
-                                                          _minimumDeIn =
-                                                              double.parse(e)
-                                                        })
-                                                  }
-                                              },
+                                              controller: _minimumDeIn,
+                                              onChanged: (e) => {},
                                               // obscureText: isPassword,
                                             )
                                           ],
@@ -695,16 +788,8 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                                     TextStyle(fontSize: 16),
                                                 hintText: '0',
                                               ),
-                                              // controller: controller,
-                                              onChanged: (e) => {
-                                                if (e != "")
-                                                  {
-                                                    setState(() => {
-                                                          _maximumQuantity =
-                                                              double.parse(e)
-                                                        })
-                                                  }
-                                              },
+                                              controller: _maximumQuantity,
+                                              onChanged: (e) => {},
                                               // obscureText: isPassword,
                                             )
                                           ],
@@ -735,16 +820,8 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                                     TextStyle(fontSize: 16),
                                                 hintText: '0',
                                               ),
-                                              // controller: controller,
-                                              onChanged: (e) => {
-                                                if (e != "")
-                                                  {
-                                                    setState(() => {
-                                                          _minimumQuantity =
-                                                              double.parse(e)
-                                                        })
-                                                  }
-                                              },
+                                              controller: _minimumQuantity,
+                                              onChanged: (e) => {},
                                               // obscureText: isPassword,
                                             )
                                           ],
@@ -777,14 +854,8 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                                     TextStyle(fontSize: 16),
                                                 hintText: 'Ví dụ: 330ml / Chai',
                                               ),
-                                              // controller: controller,
-                                              onChanged: (e) => {
-                                                if (e != "")
-                                                  {
-                                                    setState(() =>
-                                                        {_packDescription = e})
-                                                  }
-                                              },
+                                              controller: _packDescription,
+                                              onChanged: (e) => {},
                                               // obscureText: isPassword,
                                             )
                                           ],
@@ -810,7 +881,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
                       height: 45,
                       child: ElevatedButton(
                         child: Text(
-                          "Hoàn tất",
+                          "Cập nhật",
                           style: TextStyle(
                               color: Colors.black,
                               fontFamily: "SF Bold",
@@ -825,17 +896,30 @@ class _NewProductScreenState extends State<NewProductScreen> {
                           ),
                         ),
                         onPressed: () => {
-                          if (_formKey.currentState!.validate())
-                            {hanldeSubmit()},
-                          if (_image == null)
+                          if (_image == null && isImage == "")
                             {
                               setState(() {
                                 validImage = false;
                               })
                             }
+                          else if (_formKey.currentState!.validate() &&
+                              (_image != null || isImage != ""))
+                            {hanldeUpdate()},
                         },
                       ),
                     ))),
+            if (isLoadingSubmit)
+              Positioned(
+                child: Container(
+                  color: Colors.white.withOpacity(0.5),
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: SpinKitDualRing(
+                    color: MaterialColors.primary,
+                    size: 50.0,
+                  ),
+                ),
+              ),
           ],
         ));
   }

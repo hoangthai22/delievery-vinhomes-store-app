@@ -20,6 +20,16 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
           scaffoldBackgroundColor: MaterialColors.grey,
+          tabBarTheme: TabBarTheme(
+              labelColor: MaterialColors.primary,
+              labelStyle: TextStyle(fontFamily: "SF SemiBold", fontSize: 16),
+              unselectedLabelColor: Colors.black54,
+              unselectedLabelStyle:
+                  TextStyle(fontFamily: "SF SemiBold", fontSize: 16),
+              indicator: UnderlineTabIndicator(
+                  // color for indicator (underline)
+                  borderSide:
+                      BorderSide(color: MaterialColors.primary, width: 3))),
           fontFamily: 'SF Regular',
           inputDecorationTheme: InputDecorationTheme(
             focusedBorder: UnderlineInputBorder(

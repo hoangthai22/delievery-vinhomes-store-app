@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:store_app/screens/home_screen.dart';
-import 'package:store_app/screens/orders_screen.dart';
+import 'package:store_app/screens/menu_screen.dart';
 import 'package:store_app/screens/product_list_screen.dart';
 import 'package:store_app/screens/profile_screen.dart';
 import 'package:store_app/screens/transaction_sreen.dart';
@@ -17,9 +17,9 @@ class AppState extends State<App> {
 
   final _navigatorKeys = {
     TabItem.home: GlobalKey<NavigatorState>(),
-    TabItem.mentor: GlobalKey<NavigatorState>(),
-    TabItem.search: GlobalKey<NavigatorState>(),
-    TabItem.coffee: GlobalKey<NavigatorState>(),
+    TabItem.product: GlobalKey<NavigatorState>(),
+    TabItem.menu: GlobalKey<NavigatorState>(),
+    TabItem.transaction: GlobalKey<NavigatorState>(),
     TabItem.account: GlobalKey<NavigatorState>(),
   };
 
@@ -121,7 +121,7 @@ class AppState extends State<App> {
     List<Widget> _widgetOptions = <Widget>[
       HomeScreen(),
       ProductListScreen(),
-      OrdersScreen(),
+      MenuScreen(),
       TransactionSreen(),
       ProfileScreen()
     ];

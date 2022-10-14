@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:store_app/apis/apiService.dart';
 import 'package:store_app/constants/Theme.dart';
 import 'package:store_app/models/productModel.dart';
+import 'package:store_app/screens/update_product_screen.dart';
 import 'package:store_app/widgets/product/product_list.dart';
 
 class ProductListScreen extends StatefulWidget {
@@ -23,14 +24,8 @@ class _ProductListScreenState extends State<ProductListScreen>
   late bool isListFull = false;
   late int page = 1;
   final ScrollController scrollController = ScrollController();
-  late final AnimationController _controller = AnimationController(
-    duration: const Duration(milliseconds: 500),
-    vsync: this,
-  )..forward(from: 0);
-  late final Animation<double> _animation = CurvedAnimation(
-    parent: _controller,
-    curve: Curves.easeIn,
-  );
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
 
   getListProduct() {
     ApiServices.getListProduct("s4", page, 8).then((value) => {
@@ -39,6 +34,7 @@ class _ProductListScreenState extends State<ProductListScreen>
               setState(() {
                 listProduct = value;
                 isLoading = false;
+                page++;
               })
             }
         });
@@ -48,6 +44,16 @@ class _ProductListScreenState extends State<ProductListScreen>
   void initState() {
     super.initState();
     getListProduct();
+
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    )..forward(from: 0);
+
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeIn,
+    );
 
     scrollController.addListener(() {
       if (scrollController.position.pixels >=
@@ -98,8 +104,15 @@ class _ProductListScreenState extends State<ProductListScreen>
     // futureMentor = fetchData();
   }
 
+  // @override
+  // void didChangeDependencies() {
+  //   _controller.dispose();
+  //   super.didChangeDependencies();
+  // }
+
   @override
   void dispose() {
+    _controller.stop();
     _controller.dispose();
     // scrollController.dispose();
     super.dispose();
@@ -129,6 +142,15 @@ class _ProductListScreenState extends State<ProductListScreen>
                     Padding(padding: EdgeInsets.all(10)),
                     ProductList(
                       productList: listProduct,
+                      onTap: (pro) => {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                UpdateProductScreen(productModel: pro),
+                          ),
+                        )
+                      },
                     ),
                     if (_isLoadingMore)
                       Center(
@@ -162,7 +184,7 @@ class _ProductListScreenState extends State<ProductListScreen>
                   width: MediaQuery.of(context).size.width * 0.42,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.green,
+                        primary: MaterialColors.secondary,
                         textStyle: TextStyle(color: Colors.black),
                         shadowColor: Colors.white,
                         shape: RoundedRectangleBorder(

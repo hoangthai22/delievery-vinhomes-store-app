@@ -2,21 +2,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:store_app/constants/Theme.dart';
 
-enum TabItem { home, mentor, search, coffee, account }
+enum TabItem { home, product, menu, transaction, account }
 
 const Map<TabItem, String> tabName = {
   TabItem.home: 'Trang chủ',
-  TabItem.mentor: 'Sản phẩm',
-  TabItem.search: 'Đơn hàng',
-  TabItem.coffee: 'Giao dịch',
+  TabItem.product: 'Sản phẩm',
+  TabItem.menu: 'Thực đơn',
+  TabItem.transaction: 'Giao dịch',
   TabItem.account: 'Tài khoản',
 };
 
 const Map<TabItem, IconData> tabIcon = {
   TabItem.home: Icons.home,
-  TabItem.mentor: Icons.fastfood,
-  TabItem.search: Icons.list_alt_sharp,
-  TabItem.coffee: Icons.payment,
+  TabItem.product: Icons.fastfood,
+  TabItem.menu: Icons.list_alt_sharp,
+  TabItem.transaction: Icons.payment,
   TabItem.account: Icons.account_circle,
 };
 
@@ -56,9 +56,9 @@ class _BottomNavbarState extends State<BottomNavbar> {
       selectedItemColor: MaterialColors.primary,
       items: [
         _buildItem(TabItem.home),
-        _buildNofication(TabItem.mentor),
-        _buildItem(TabItem.search),
-        _buildNofication(TabItem.coffee),
+        _buildNofication(TabItem.product),
+        _buildItem(TabItem.menu),
+        _buildNofication(TabItem.transaction),
         _buildItem(TabItem.account),
       ],
       onTap: (index) => widget.onSelectTab(

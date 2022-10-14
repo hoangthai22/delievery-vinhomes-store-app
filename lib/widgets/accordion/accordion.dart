@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:store_app/constants/Theme.dart';
 
 class Accordion extends StatefulWidget {
   const Accordion({Key? key, required this.content, required this.title})
@@ -34,7 +35,7 @@ class _AccordionState extends State<Accordion> {
                     style: TextStyle(
                       fontFamily: "SF SemiBold",
                       fontSize: 18,
-                      color: Colors.green,
+                      color: MaterialColors.secondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -43,7 +44,7 @@ class _AccordionState extends State<Accordion> {
                       _showContent
                           ? Icons.keyboard_arrow_up_outlined
                           : Icons.keyboard_arrow_down_outlined,
-                      color: Colors.green),
+                      color: MaterialColors.secondary),
                 ],
               )),
           _showContent
