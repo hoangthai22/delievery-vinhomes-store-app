@@ -32,7 +32,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 1,
+      initialIndex: 0,
       length: 3,
       child: Scaffold(
         appBar: AppBar(
@@ -40,7 +40,7 @@ class _MenuScreenState extends State<MenuScreen> {
           backgroundColor: Color.fromARGB(255, 255, 255, 255),
           centerTitle: true,
           title: Text(
-            "Danh sách sản phẩm",
+            "Thực đơn",
             style:
                 TextStyle(color: MaterialColors.black, fontFamily: "SF Bold"),
           ),
@@ -61,11 +61,11 @@ class _MenuScreenState extends State<MenuScreen> {
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: <Widget>[
-            MenuTab(),
-            MenuTab(),
-            MenuTab(),
+            MenuTab(menuIndex: "1"),
+            MenuTab(menuIndex: "2"),
+            MenuTab(menuIndex: "3"),
           ],
         ),
       ),

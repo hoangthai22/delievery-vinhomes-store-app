@@ -11,6 +11,7 @@ class AccordionMenu extends StatefulWidget {
       : super(key: key);
   final String title;
   final String count;
+
   final Widget content;
   @override
   _AccordionMenuState createState() => _AccordionMenuState();

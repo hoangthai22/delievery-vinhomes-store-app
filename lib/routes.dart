@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:store_app/main.dart';
 import 'package:store_app/screens/app.dart';
 import 'package:store_app/screens/home_screen.dart';
 import 'package:store_app/screens/landing_screen.dart';

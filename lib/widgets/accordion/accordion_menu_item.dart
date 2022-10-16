@@ -6,10 +6,12 @@ class AccordionMenuItem extends StatefulWidget {
   String name;
   String price;
   bool isActive;
+  bool isBorder;
   AccordionMenuItem(
       {Key? key,
       required this.name,
       required this.price,
+      required this.isBorder,
       required this.isActive})
       : super(key: key);
 
@@ -32,8 +34,11 @@ class _AccordionMenuItemState extends State<AccordionMenuItem> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(top: 20, bottom: 20),
-      decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.black12, width: 1))),
+      decoration: widget.isBorder
+          ? BoxDecoration(
+              border:
+                  Border(bottom: BorderSide(color: Colors.black12, width: 1)))
+          : null,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -55,7 +60,7 @@ class _AccordionMenuItemState extends State<AccordionMenuItem> {
                   widget.price + "đ",
                   style: TextStyle(
                       fontFamily: "SF Medium",
-                      fontSize: 17,
+                      fontSize: 16,
                       color: Colors.black45),
                 )
               ],
@@ -69,7 +74,7 @@ class _AccordionMenuItemState extends State<AccordionMenuItem> {
               toggleSize: 25.0,
               value: status,
               borderRadius: 30.0,
-              padding: 5.0,
+              padding: 4.0,
               activeColor: Colors.green,
               // showOnOff: true,
               onToggle: (val) {

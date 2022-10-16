@@ -46,7 +46,7 @@ class _ProductListScreenState extends State<ProductListScreen>
     getListProduct();
 
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 100),
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     )..forward(from: 0);
 
