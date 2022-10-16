@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:store_app/main.dart';
+import 'package:store_app/screens/app.dart';
 import 'package:store_app/screens/home_screen.dart';
 import 'package:store_app/screens/landing_screen.dart';
 import 'package:store_app/screens/login_screen.dart';
+import 'package:store_app/screens/new_product_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -15,7 +18,9 @@ class RouteGenerator {
       case '/login':
         return MaterialPageRoute(builder: (_) => LoginScreen());
       case '/home':
-        return MaterialPageRoute(builder: (_) => HomeScreen());
+        return MaterialPageRoute(builder: (_) => App());
+      case '/new-product':
+        return MaterialPageRoute(builder: (_) => NewProductScreen());
       default:
         // If there is no such named route in the switch statement, e.g. /third
         return _errorRoute();
