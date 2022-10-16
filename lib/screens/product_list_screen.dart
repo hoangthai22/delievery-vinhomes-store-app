@@ -6,11 +6,13 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:store_app/apis/apiService.dart';
 import 'package:store_app/constants/Theme.dart';
 import 'package:store_app/models/productModel.dart';
+import 'package:store_app/provider/appProvider.dart';
 import 'package:store_app/screens/update_product_screen.dart';
 import 'package:store_app/widgets/product/product_list.dart';
 
 class ProductListScreen extends StatefulWidget {
-  const ProductListScreen({Key? key}) : super(key: key);
+  String storeId;
+  ProductListScreen({Key? key, required this.storeId}) : super(key: key);
 
   @override
   _ProductListScreenState createState() => _ProductListScreenState();
@@ -28,7 +30,7 @@ class _ProductListScreenState extends State<ProductListScreen>
   late final Animation<double> _animation;
 
   getListProduct() {
-    ApiServices.getListProduct("s4", page, 8).then((value) => {
+    ApiServices.getListProduct(widget.storeId, page, 8).then((value) => {
           if (value != null)
             {
               setState(() {
@@ -65,7 +67,7 @@ class _ProductListScreenState extends State<ProductListScreen>
         });
         List<ProductModel> products = [];
         List<ProductModel> newProducts = [];
-        ApiServices.getListProduct("s4", page, 8).then((value) => {
+        ApiServices.getListProduct(widget.storeId, page, 8).then((value) => {
               if (value != null)
                 {
                   products = value,
@@ -218,7 +220,8 @@ class _ProductListScreenState extends State<ProductListScreen>
                                       _isLoadingMore = false;
                                       page = 1;
                                       listProduct = [];
-                                      ApiServices.getListProduct("s4", 1, 8)
+                                      ApiServices.getListProduct(
+                                              widget.storeId, 1, 8)
                                           .then((value) => {
                                                 if (value != null)
                                                   {

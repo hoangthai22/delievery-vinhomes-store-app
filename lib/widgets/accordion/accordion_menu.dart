@@ -49,7 +49,7 @@ class _AccordionMenuState extends State<AccordionMenu> {
               Container(
                 child: Row(children: [
                   Text(
-                    widget.count,
+                    widget.count + " món",
                     style: TextStyle(
                       fontFamily: "SF Medium",
                       fontSize: 16,

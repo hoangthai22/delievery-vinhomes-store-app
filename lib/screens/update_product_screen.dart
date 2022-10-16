@@ -112,6 +112,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
   }
 
   Future<void> hanldeUpdate() async {
+    FocusScope.of(context).unfocus();
     // print(img64);
     print("_category" + _category);
     print("_unit" + _unit);

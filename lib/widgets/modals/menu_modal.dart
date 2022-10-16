@@ -36,7 +36,9 @@ class CheckedItem {
 class MenuModal extends StatefulWidget {
   late ValueChanged<void> function;
   late String menuId;
-  MenuModal({required this.function, required this.menuId});
+  late String storeId;
+  MenuModal(
+      {required this.function, required this.menuId, required this.storeId});
   @override
   State<StatefulWidget> createState() => _MenuModal();
 }
@@ -49,7 +51,7 @@ class _MenuModal extends State<MenuModal> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    ApiServices.getListProductOutOfMenu(widget.menuId, "s4", 1, 100)
+    ApiServices.getListProductOutOfMenu(widget.menuId, widget.storeId, 1, 100)
         .then((value) => {
               if (value != null)
                 {

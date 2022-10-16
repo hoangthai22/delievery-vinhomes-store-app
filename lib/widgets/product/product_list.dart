@@ -20,11 +20,19 @@ class _ProductListState extends State<ProductList> {
     return SingleChildScrollView(
         child: Column(
       children: [
-        if (widget.productList.length > 0)
+        if (widget.productList.isNotEmpty)
           ...widget.productList.map(
             (ProductModel pro) =>
                 ProductItem(product: pro, onTap: (pro) => {widget.onTap!(pro)}),
           )
+        else ...[
+          Container(
+            height: 200,
+            child: Center(
+              child: Text("Không có sản phẩm nào"),
+            ),
+          )
+        ]
       ],
     ));
   }

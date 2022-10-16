@@ -51,7 +51,7 @@ class _AccordionMenuItemState extends State<AccordionMenuItem> {
                 Text(
                   widget.name,
                   style: TextStyle(
-                    fontFamily: "SF SemiBold",
+                    fontFamily: "SF Medium",
                     fontSize: 17,
                   ),
                 ),
@@ -68,10 +68,10 @@ class _AccordionMenuItemState extends State<AccordionMenuItem> {
           ),
           Container(
             child: FlutterSwitch(
-              width: 60.0,
-              height: 30.0,
+              width: 55.0,
+              height: 25.0,
               valueFontSize: 15.0,
-              toggleSize: 25.0,
+              toggleSize: 20.0,
               value: status,
               borderRadius: 30.0,
               padding: 4.0,
