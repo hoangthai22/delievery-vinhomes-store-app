@@ -22,7 +22,8 @@ const kHeadSubtitleTextStyle = TextStyle(
 );
 
 class MenuScreen extends StatefulWidget {
-  const MenuScreen({Key? key}) : super(key: key);
+  String storeId;
+  MenuScreen({Key? key, required this.storeId}) : super(key: key);
 
   @override
   _MenuScreenState createState() => _MenuScreenState();
@@ -63,9 +64,9 @@ class _MenuScreenState extends State<MenuScreen> {
         ),
         body: TabBarView(
           children: <Widget>[
-            MenuTab(menuIndex: "1"),
-            MenuTab(menuIndex: "2"),
-            MenuTab(menuIndex: "3"),
+            MenuTab(menuIndex: "1", storeId: widget.storeId),
+            MenuTab(menuIndex: "2", storeId: widget.storeId),
+            MenuTab(menuIndex: "3", storeId: widget.storeId),
           ],
         ),
       ),

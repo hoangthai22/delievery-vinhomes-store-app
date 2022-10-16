@@ -53,8 +53,10 @@ class _ProductItemState extends State<ProductItem> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  Padding(padding: EdgeInsets.all(5)),
                   Container(
                     // width: 100,
+
                     child: ClipRRect(
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(8),

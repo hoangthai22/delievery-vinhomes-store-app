@@ -5,7 +5,7 @@ import 'package:store_app/constants/Theme.dart';
 enum TabItem { home, product, menu, transaction, account }
 
 const Map<TabItem, String> tabName = {
-  TabItem.home: 'Trang chủ',
+  TabItem.home: 'Đơn hàng',
   TabItem.product: 'Sản phẩm',
   TabItem.menu: 'Thực đơn',
   TabItem.transaction: 'Giao dịch',
@@ -13,7 +13,7 @@ const Map<TabItem, String> tabName = {
 };
 
 const Map<TabItem, IconData> tabIcon = {
-  TabItem.home: Icons.home,
+  TabItem.home: Icons.shopping_bag_outlined,
   TabItem.product: Icons.fastfood,
   TabItem.menu: Icons.list_alt_sharp,
   TabItem.transaction: Icons.payment,

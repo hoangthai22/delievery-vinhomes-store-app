@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:store_app/provider/appProvider.dart';
 import 'package:store_app/screens/home_screen.dart';
 import 'package:store_app/screens/menu_screen.dart';
 import 'package:store_app/screens/product_list_screen.dart';
@@ -118,50 +120,53 @@ class AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> _widgetOptions = <Widget>[
-      HomeScreen(),
-      ProductListScreen(),
-      MenuScreen(),
-      TransactionSreen(),
-      ProfileScreen()
-    ];
-
     // return Consumer<AppProvider>(builder: (context, provider, child) {
-    return WillPopScope(
-        onWillPop: () async {
-          // if (provider.getIsLogin == true) {
-          final isFirstRouteInCurrentTab =
-              !await _navigatorKeys[_currentTab]!.currentState!.maybePop();
-          if (isFirstRouteInCurrentTab) {
-            // if not on the 'main' tab
-            if (_currentTab != TabItem.home) {
-              // select 'main' tab
-              _selectTab(TabItem.home);
-              // back button handled by app
-              return false;
-            }
-          }
-          // let system handle back button if we're on the first route
-          return isFirstRouteInCurrentTab;
-        },
+    return WillPopScope(onWillPop: () async {
+      // if (provider.getIsLogin == true) {
+      final isFirstRouteInCurrentTab =
+          !await _navigatorKeys[_currentTab]!.currentState!.maybePop();
+      if (isFirstRouteInCurrentTab) {
+        // if not on the 'main' tab
+        if (_currentTab != TabItem.home) {
+          // select 'main' tab
+          _selectTab(TabItem.home);
+          // back button handled by app
+          return false;
+        }
+      }
+      // let system handle back button if we're on the first route
+      return isFirstRouteInCurrentTab;
+    },
         // },
-        child: Scaffold(
-            body: GestureDetector(
-              onTap: () {
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
-              child: _widgetOptions.elementAt(_currentTab.index),
+        child: Consumer<AppProvider>(builder: (context, provider, child) {
+      var storeId = context.read<AppProvider>().getUserId ?? "";
+      List<Widget> widgetOptions = <Widget>[
+        HomeScreen(),
+        ProductListScreen(
+          storeId: storeId,
+        ),
+        MenuScreen(storeId: storeId),
+        TransactionSreen(),
+        ProfileScreen()
+      ];
+      return Scaffold(
+          body: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: widgetOptions.elementAt(_currentTab.index),
+          ),
+          bottomNavigationBar: Theme(
+            data: Theme.of(context).copyWith(
+              canvasColor: Colors.white,
+              primaryColor: Colors.red,
             ),
-            bottomNavigationBar: Theme(
-              data: Theme.of(context).copyWith(
-                canvasColor: Colors.white,
-                primaryColor: Colors.red,
-              ),
-              child: BottomNavbar(
-                currentTab: _currentTab,
-                onSelectTab: _selectTab,
-              ),
-            )));
+            child: BottomNavbar(
+              currentTab: _currentTab,
+              onSelectTab: _selectTab,
+            ),
+          ));
+    }));
     // });
   }
 }

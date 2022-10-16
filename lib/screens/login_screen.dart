@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:store_app/constants/Theme.dart';
 import 'package:store_app/provider/appProvider.dart';
@@ -22,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _validUserName = true;
   String _textPass = '';
   FirebaseAuth auth = FirebaseAuth.instance;
-
+  bool isLoading = false;
   String? _errorText(TextEditingController controller) {
     // at any time, we can get the text from _controller.value.text
     final text = controller.value.text;
@@ -38,25 +39,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
-  // void handleLogin() {
-  //   if (_textUserName.isNotEmpty && _textPass.isNotEmpty) {
-  //     try {
-  //       User user;
-  //       auth
-  //           .signInWithEmailAndPassword(
-  //               email: _textUserName, password: _textUserName)
-  //           .then((value) => {
-  //                 if (value.user != null)
-  //                   {print("ok"), user = value.user!, print(user.email)}
-  //               });
-  //     } on FirebaseAuthException catch (e) {
-  //       print(e.message);
-  //       throw e;
-  //     }
-  //   }
-  // }
   handleSignInEmail() {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      isLoading = true;
+    });
     User user;
+
     auth
         .signInWithEmailAndPassword(email: _textUserName, password: _textPass)
         .then((value) => {
@@ -67,8 +56,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       .read<AppProvider>()
                       .setUserLogin(user.email.toString()),
                   print(user.email),
-                  Navigator.pushNamed(context, '/home')
+                  setState(() {
+                    isLoading = false;
+                  }),
+                  Navigator.pushReplacementNamed(context, '/home')
                 }
+              else
+                {print("sai mat khau")}
             });
   }
 
@@ -157,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Navigator.pushNamed(context, '/home');
           handleSignInEmail();
           print("_textUserName: " + _textUserName);
-          print("_textPass: " + _textUserName);
+          print("_textPass: " + _textPass);
         }
       },
       child: Container(
@@ -217,41 +211,56 @@ class _LoginScreenState extends State<LoginScreen> {
     final height = MediaQuery.of(context).size.height;
     return Consumer<AppProvider>(builder: (context, provider, child) {
       return Scaffold(
-          body: Container(
-        height: height,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-                top: -height * .15,
-                right: -MediaQuery.of(context).size.width * .4,
-                child: const BezierContainer()),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: height * .2),
-                    _title(),
-                    const SizedBox(height: 50),
-                    _emailPasswordWidget(),
-                    const SizedBox(height: 20),
-                    _submitButton(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      alignment: Alignment.centerRight,
-                      child: const Text('Quên mật khẩu ?',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500)),
+          body: Stack(
+        children: [
+          Container(
+            height: height,
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                    top: -height * .15,
+                    right: -MediaQuery.of(context).size.width * .4,
+                    child: const BezierContainer()),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(height: height * .2),
+                        _title(),
+                        const SizedBox(height: 50),
+                        _emailPasswordWidget(),
+                        const SizedBox(height: 20),
+                        _submitButton(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          alignment: Alignment.centerRight,
+                          child: const Text('Quên mật khẩu ?',
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w500)),
+                        ),
+                        SizedBox(height: height * .055),
+                      ],
                     ),
-                    SizedBox(height: height * .055),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
+          ),
+          if (isLoading) ...[
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.white.withOpacity(0.5),
+              child: SpinKitFoldingCube(
+                color: MaterialColors.primary,
+                size: 50.0,
+              ),
+            )
           ],
-        ),
+        ],
       ));
     });
   }

@@ -27,10 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           body: Container(
               child: InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/login');
-              auth.signOut();
-            },
+            onTap: () {},
             child: Center(
               child: Text("Logout " + context.read<AppProvider>().getUserId),
             ),
