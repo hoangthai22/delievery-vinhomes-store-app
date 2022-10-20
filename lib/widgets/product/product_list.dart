@@ -6,7 +6,7 @@ import 'package:store_app/widgets/product/product_item.dart';
 
 class ProductList extends StatefulWidget {
   List<ProductModel> productList = [];
-  final Function(ProductModel product)? onTap;
+  final Function(ProductModel product, bool delete)? onTap;
   ProductList({Key? key, required this.productList, required this.onTap})
       : super(key: key);
 
@@ -22,14 +22,31 @@ class _ProductListState extends State<ProductList> {
       children: [
         if (widget.productList.isNotEmpty)
           ...widget.productList.map(
-            (ProductModel pro) =>
-                ProductItem(product: pro, onTap: (pro) => {widget.onTap!(pro)}),
+            (ProductModel pro) => ProductItem(
+                product: pro,
+                onTap: (pro, delete) => {
+                      widget.onTap!(pro, delete),
+                    }),
           )
         else ...[
           Container(
-            height: 200,
-            child: Center(
-              child: Text("Không có sản phẩm nào"),
+            padding: EdgeInsets.only(top: 50),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.no_food_rounded),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Không có sản phầm nào!",
+                  style: TextStyle(
+                      color: MaterialColors.black,
+                      fontFamily: "SF Regular",
+                      fontSize: 15),
+                )
+              ],
             ),
           )
         ]

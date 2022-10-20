@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:store_app/constants/Theme.dart';
@@ -71,17 +72,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
     if (_image != null) {
       var bytes = File(_image!.path).readAsBytesSync();
       String img64 = base64Encode(bytes);
-      print(img64);
-      print("_category" + _category);
-      print("_unit" + _unit);
-      print("_name" + _name);
-      print("_pricePerPack" + _pricePerPack.toString());
-      print("_price" + _price);
-      print("_packNetWeight" + _packNetWeight.toString());
-      print("_maximumQuantity" + _maximumQuantity.toString());
-      print("_minimumQuantity" + _minimumQuantity.toString());
-      print("_minimumDeIn" + _minimumDeIn.toString());
-      print("_packDescription" + _packDescription.toString());
+
       ProductModel product = ProductModel(
           image: img64 ?? "",
           name: _name,
@@ -102,6 +93,14 @@ class _NewProductScreenState extends State<NewProductScreen> {
               {
                 setState(() {
                   isLoading = false;
+                  Fluttertoast.showToast(
+                      msg: "Thêm sản phẩm thành công",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.TOP,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.green,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
                 }),
                 Navigator.pop(context)
               }

@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:store_app/apis/apiService.dart';
 import 'package:store_app/constants/Theme.dart';
+import 'package:store_app/models/messageModel.dart';
 import 'package:store_app/models/productModel.dart';
 import 'package:store_app/provider/appProvider.dart';
 import 'package:store_app/screens/update_product_screen.dart';
@@ -38,6 +41,67 @@ class _ProductListScreenState extends State<ProductListScreen>
                 isLoading = false;
                 page++;
               })
+            }
+        });
+  }
+
+  Map<String, dynamic> toJson(message) {
+    return {
+      jsonEncode("message"): jsonEncode(message),
+    };
+  }
+
+  void handleDelete(id) {
+    setState(() {
+      isLoading = true;
+    });
+    MessageModel mess = MessageModel();
+    ApiServices.deleteProduct(id).then((value) => {
+          if (value != null)
+            {
+              // print("toJson(value): " + toJson(value).toString()),
+              // mess = value,
+              if (value == "Deleted products sucessfull !!")
+                {
+                  setState(() {
+                    _isLoadingMore = false;
+                    page = 1;
+                  }),
+                  Fluttertoast.showToast(
+                      msg: "Xóa sản phẩm thành công",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.TOP,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.green,
+                      textColor: Colors.white,
+                      fontSize: 16.0),
+                  ApiServices.getListProduct(widget.storeId, 1, 8)
+                      .then((value) => {
+                            if (value != null)
+                              {
+                                setState(() {
+                                  listProduct = value;
+                                  isLoading = false;
+                                  isListFull = false;
+                                })
+                              }
+                          })
+                }
+              else
+                {
+                  setState(() {
+                    isLoading = false;
+                  }),
+                  Fluttertoast.showToast(
+                      msg:
+                          "Hiện tại sản phẩm đang có trong menu. Vui lòng xóa sản phẩm khỏi menu và thử lại",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.TOP,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0)
+                }
             }
         });
   }
@@ -144,14 +208,35 @@ class _ProductListScreenState extends State<ProductListScreen>
                     Padding(padding: EdgeInsets.all(10)),
                     ProductList(
                       productList: listProduct,
-                      onTap: (pro) => {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                UpdateProductScreen(productModel: pro),
-                          ),
-                        )
+                      onTap: (pro, delete) => {
+                        if (delete)
+                          {handleDelete(pro.id)}
+                        else
+                          {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UpdateProductScreen(
+                                          productModel: pro,
+                                        ))).then((_) => setState(() {
+                                  isLoading = true;
+                                  _isLoadingMore = false;
+                                  page = 1;
+                                  listProduct = [];
+                                  ApiServices.getListProduct(
+                                          widget.storeId, 1, 8)
+                                      .then((value) => {
+                                            if (value != null)
+                                              {
+                                                setState(() {
+                                                  listProduct = value;
+                                                  isLoading = false;
+                                                  isListFull = false;
+                                                }),
+                                              }
+                                          });
+                                }))
+                          }
                       },
                     ),
                     if (_isLoadingMore)
@@ -183,7 +268,7 @@ class _ProductListScreenState extends State<ProductListScreen>
                 bottom: 15,
                 child: Container(
                   height: 45,
-                  width: MediaQuery.of(context).size.width * 0.42,
+                  width: MediaQuery.of(context).size.width * 0.45,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         primary: MaterialColors.secondary,
@@ -229,7 +314,7 @@ class _ProductListScreenState extends State<ProductListScreen>
                                                       listProduct = value;
                                                       isLoading = false;
                                                       isListFull = false;
-                                                    })
+                                                    }),
                                                   }
                                               });
                                     }))

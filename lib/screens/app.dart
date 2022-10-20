@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:store_app/models/notificationModel.dart';
 import 'package:store_app/provider/appProvider.dart';
 import 'package:store_app/screens/home_screen.dart';
 import 'package:store_app/screens/menu_screen.dart';
@@ -29,40 +33,40 @@ class AppState extends State<App> {
     setState(() => _currentTab = tabItem);
   }
 
-  // FirebaseMessaging messaging = FirebaseMessaging.instance;
-  // PushNotificationModel? _notificationInfo;
-  // FirebaseFirestore db = FirebaseFirestore.instance;
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  PushNotificationModel? _notificationInfo;
+  FirebaseFirestore db = FirebaseFirestore.instance;
   // late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  // void registerNotification() async {
-  //   await Firebase.initializeApp();
-  //   messaging = FirebaseMessaging.instance;
+  void registerNotification() async {
+    await Firebase.initializeApp();
+    messaging = FirebaseMessaging.instance;
 
-  //   NotificationSettings settings = await messaging.requestPermission(
-  //       alert: true, badge: true, provisional: false, sound: true);
-  //   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-  //     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //       print("on app");
-  //       PushNotificationModel notification = PushNotificationModel(
-  //           title: message.notification!.title,
-  //           body: message.notification!.body,
-  //           dataTitle: message.data['title'],
-  //           dataBody: message.data['body']);
+    NotificationSettings settings = await messaging.requestPermission(
+        alert: true, badge: true, provisional: false, sound: true);
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        print("on app");
+        PushNotificationModel notification = PushNotificationModel(
+            title: message.notification!.title,
+            body: message.notification!.body,
+            dataTitle: message.data['title'],
+            dataBody: message.data['body']);
 
-  //       setState(() {
-  //         _notificationInfo = notification;
-  //       });
-  //       print("body: ${notification.body}");
-  //       print("title: ${notification.title}");
-  //       if (notification != null) {
-  //         _showNotification(
-  //             _notificationInfo!.title!, _notificationInfo!.body!);
-  //       }
-  //     });
-  //   } else {
-  //     print("not permission");
-  //   }
-  // }
+        setState(() {
+          _notificationInfo = notification;
+        });
+        print("body: ${notification.body}");
+        print("title: ${notification.title}");
+        if (notification != null) {
+          // _showNotification(
+          //     _notificationInfo!.title!, _notificationInfo!.body!);
+        }
+      });
+    } else {
+      print("not permission");
+    }
+  }
 
   // Future<void> _showNotification(String title, String content) async {
   //   final AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -80,43 +84,44 @@ class AppState extends State<App> {
   //       .show(0, title, content, platformChannelSpecifics, payload: 'item x');
   // }
 
-  // @override
-  // void initState() {
-  //   var initializationSettingsAndroid =
-  //       AndroidInitializationSettings('@mipmap/ic_launcher');
-  //   var initializationSettingsIOS = IOSInitializationSettings();
-  //   var initializationSettings = InitializationSettings(
-  //       android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-  //   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  //   flutterLocalNotificationsPlugin.initialize(initializationSettings,
-  //       onSelectNotification: (value) {
-  //     Navigator.pushNamed(context, "/notification");
-  //   });
+  @override
+  void initState() {
+    // var initializationSettingsAndroid =
+    //     AndroidInitializationSettings('@mipmap/ic_launcher');
+    // var initializationSettingsIOS = IOSInitializationSettings();
+    // var initializationSettings = InitializationSettings(
+    //     android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    // flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    // flutterLocalNotificationsPlugin.initialize(initializationSettings,
+    //     onSelectNotification: (value) {
+    //   Navigator.pushNamed(context, "/notification");
+    // });
 
-  //   registerNotification();
-  //   checkForInitialMessage();
-  //   super.initState();
-  //   UserModel user;
-  //   ApiServices.getProfileByUsername(context.read<AppProvider>().getUid)
-  //       .then((value) => {
-  //             print("value12321: $value"),
-  //             if (value != null)
-  //               {
-  //                 user = value,
-  //                 context.read<AppProvider>().setAvatar(user.image)
-  //               }
-  //           });
-  // }
+    registerNotification();
+    checkForInitialMessage();
+    super.initState();
 
-  // checkForInitialMessage() async {
-  //   RemoteMessage? initialMessage =
-  //       await FirebaseMessaging.instance.getInitialMessage();
-  //   if (initialMessage != null) {
-  //     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-  //       Navigator.pushNamed(context, "/notification");
-  //     });
-  //   }
-  // }
+    // UserModel user;
+    // ApiServices.getProfileByUsername(context.read<AppProvider>().getUid)
+    //     .then((value) => {
+    //           print("value12321: $value"),
+    //           if (value != null)
+    //             {
+    //               user = value,
+    //               context.read<AppProvider>().setAvatar(user.image)
+    //             }
+    //         });
+  }
+
+  checkForInitialMessage() async {
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        Navigator.pushNamed(context, "/notification");
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

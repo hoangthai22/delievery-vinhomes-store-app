@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'dart:convert' as convert;
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:store_app/apis/apiService.dart';
@@ -18,8 +19,10 @@ import 'package:http/http.dart' as http;
 
 class UpdateProductScreen extends StatefulWidget {
   final ProductModel productModel;
-  const UpdateProductScreen({Key? key, required this.productModel})
-      : super(key: key);
+  const UpdateProductScreen({
+    Key? key,
+    required this.productModel,
+  }) : super(key: key);
 
   @override
   _UpdateProductScreenState createState() => _UpdateProductScreenState();
@@ -48,10 +51,12 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
   File? _image;
   bool valid = false;
   bool validImage = true;
-  bool isLoadingSubmit = false;
+  bool isLoadingSubmit = true;
   String isImage = "";
   String _category = '';
+  String _storeId = '';
   String _unit = '';
+  String _id = '';
   // String _name = '';
   TextEditingController _name = TextEditingController();
   // TextEditingController _unit = TextEditingController();
@@ -75,6 +80,8 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
           if (value != null)
             {
               setState(() {
+                _storeId = widget.productModel.storeId.toString();
+                _id = widget.productModel.id.toString();
                 listCategory = value;
                 _name.text = widget.productModel.name ?? "";
                 _packDescription.text =
@@ -95,9 +102,9 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                     .format((widget.productModel.minimumDeIn!).toInt())
                     .toString();
                 _unit = widget.productModel.unit.toString();
-                print("_unit " + _unit);
                 _category = widget.productModel.categoryId.toString();
                 isImage = widget.productModel.image.toString();
+                isLoadingSubmit = false;
               })
             }
         });
@@ -114,16 +121,16 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
   Future<void> hanldeUpdate() async {
     FocusScope.of(context).unfocus();
     // print(img64);
-    print("_category" + _category);
-    print("_unit" + _unit);
-    print("_name" + _name.text);
-    print("_pricePerPack" + _pricePerPack.text);
-    // print("_price" + _price);
-    print("_packNetWeight" + _packNetWeight.toString());
-    print("_maximumQuantity" + _maximumQuantity.toString());
-    print("_minimumQuantity" + _minimumQuantity.toString());
-    print("_minimumDeIn" + _minimumDeIn.toString());
-    print("_packDescription" + _packDescription.toString());
+    // print("_category" + _category);
+    // print("_unit" + _unit);
+    // print("_name" + _name.text);
+    // print("_pricePerPack" + _pricePerPack.text);
+    // // print("_price" + _price);
+    // print("_packNetWeight" + _packNetWeight.toString());
+    // print("_maximumQuantity" + _maximumQuantity.toString());
+    // print("_minimumQuantity" + _minimumQuantity.toString());
+    // print("_minimumDeIn" + _minimumDeIn.toString());
+    // print("_packDescription" + _packDescription.toString());
     var img64 = null;
     var base64String = null;
     setState(() {
@@ -140,6 +147,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
     }
 
     ProductModel product = ProductModel(
+        id: _id,
         image: img64 ?? base64String,
         name: _name.text,
         categoryId: _category,
@@ -150,19 +158,42 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
         minimumDeIn: double.parse(_minimumDeIn.text) ?? 1.0,
         unit: _unit ?? "",
         pricePerPack: double.parse(_pricePerPack.text) ?? 0.0,
-        storeId: "s4",
+        storeId: _storeId,
         rate: 0.0,
         description: "");
-    print("iamge: " + product.image.toString());
-    print(widget.productModel.id);
+    Map valueMap;
     ApiServices.putUpdateProduct(product, widget.productModel.id ?? "")
         .then((value) => {
               if (value != null)
                 {
+                  valueMap = convert.jsonDecode(value),
+                  print("value: " + valueMap.toString()),
                   setState(() {
                     isLoadingSubmit = false;
+
+                    if (valueMap["message"] ==
+                        "Hiện tại danh mục đang có trong menu !!Vui lòng xóa danh mục khỏi menu và thử lại ") {
+                      Fluttertoast.showToast(
+                          msg: valueMap["message"],
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.TOP,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                    } else {
+                      Fluttertoast.showToast(
+                          msg: "Cập nhật sản phẩm thành công",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.TOP,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.green,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                      Navigator.pop(context);
+                    }
+                    ;
                   }),
-                  Navigator.pop(context)
                 }
             });
   }
@@ -176,7 +207,6 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
       setState(() {
         _image = img;
         validImage = true;
-        print("img " + img.toString());
 
         // Navigator.of(context).pop();
       });
@@ -189,7 +219,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: new AppBar(
+        appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 255, 255, 255),
           centerTitle: true,
           iconTheme: IconThemeData(
@@ -339,7 +369,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                       color: !validImage
                                           ? Colors.red
                                           : MaterialColors.secondary,
-                                      radius: Radius.circular(20),
+                                      radius: Radius.circular(16),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(12)),
@@ -354,7 +384,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                     ? Colors.red[700]
                                                     : MaterialColors.secondary,
                                                 fontFamily: "SF Medium",
-                                                fontSize: 16),
+                                                fontSize: 15),
                                           ),
                                           // color: Colors.amber,
                                         ),
@@ -405,6 +435,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                       child: Icon(
                                     Icons.add_photo_alternate,
                                     color: MaterialColors.secondary,
+                                    size: 16,
                                   )),
                                   Padding(padding: EdgeInsets.all(5)),
                                   Text(
@@ -412,7 +443,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                     style: TextStyle(
                                         color: MaterialColors.secondary,
                                         fontFamily: "SF Bold",
-                                        fontSize: 17),
+                                        fontSize: 16),
                                   ),
                                 ],
                               ),
@@ -443,6 +474,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                       child: Icon(
                                     Icons.add_a_photo_rounded,
                                     color: MaterialColors.secondary,
+                                    size: 16,
                                   )),
                                   Padding(padding: EdgeInsets.all(5)),
                                   Text(
@@ -450,7 +482,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                     style: TextStyle(
                                         color: MaterialColors.secondary,
                                         fontFamily: "SF Bold",
-                                        fontSize: 17),
+                                        fontSize: 16),
                                   ),
                                   // SelectPhoto(
                                   //   onTap: () => onTap(ImageSource.gallery),
@@ -475,14 +507,14 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                   "Tên sản phẩm",
                                   style: TextStyle(
                                     fontFamily: "SF Semibold",
-                                    fontSize: 18,
+                                    fontSize: 16,
                                   ),
                                 ),
                                 Padding(padding: EdgeInsets.all(2)),
                                 Text(
                                   "*",
                                   style: TextStyle(
-                                      color: Colors.red, fontSize: 20),
+                                      color: Colors.red, fontSize: 16),
                                 )
                               ],
                             ),
@@ -493,8 +525,11 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                 }
                                 return null;
                               },
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
                               decoration: InputDecoration(
-                                hintStyle: TextStyle(fontSize: 16),
+                                hintStyle: TextStyle(fontSize: 14),
                                 hintText: 'Ví dụ: Cơm Tấm',
                               ),
                               controller: _name,
@@ -521,7 +556,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                 "Giá bán",
                                                 style: TextStyle(
                                                   fontFamily: "SF Semibold",
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                 ),
                                               ),
                                               Padding(
@@ -530,7 +565,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                 "*",
                                                 style: TextStyle(
                                                     color: Colors.red,
-                                                    fontSize: 20),
+                                                    fontSize: 16),
                                               )
                                             ],
                                           ),
@@ -538,6 +573,9 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                         TextFormField(
                                           controller: _pricePerPack,
                                           keyboardType: TextInputType.number,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
@@ -566,7 +604,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                 "Đơn vị",
                                                 style: TextStyle(
                                                   fontFamily: "SF Semibold",
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                 ),
                                               ),
                                               Padding(
@@ -575,7 +613,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                 "*",
                                                 style: TextStyle(
                                                     color: Colors.red,
-                                                    fontSize: 18),
+                                                    fontSize: 16),
                                               )
                                             ],
                                           ),
@@ -604,8 +642,12 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                           items: listUnit.map((value) {
                                             return DropdownMenuItem<String>(
                                               value: value.value,
-                                              child:
-                                                  Text(value.value.toString()),
+                                              child: Text(
+                                                value.value.toString(),
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                ),
+                                              ),
                                             );
                                           }).toList(),
                                         ),
@@ -629,7 +671,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                 "Danh mục",
                                                 style: TextStyle(
                                                   fontFamily: "SF Semibold",
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                 ),
                                               ),
                                               Padding(
@@ -638,7 +680,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                 "*",
                                                 style: TextStyle(
                                                     color: Colors.red,
-                                                    fontSize: 18),
+                                                    fontSize: 16),
                                               )
                                             ],
                                           ),
@@ -670,8 +712,12 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                           items: listCategory.map((value) {
                                             return DropdownMenuItem<String>(
                                               value: value.id,
-                                              child:
-                                                  Text(value.name.toString()),
+                                              child: Text(
+                                                value.name.toString(),
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                ),
+                                              ),
                                             );
                                           }).toList(),
                                         ),
@@ -706,7 +752,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                     "Đóng gói",
                                                     style: TextStyle(
                                                       fontFamily: "SF Semibold",
-                                                      fontSize: 18,
+                                                      fontSize: 16,
                                                     ),
                                                   ),
                                                 ],
@@ -715,9 +761,12 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                             TextFormField(
                                               keyboardType:
                                                   TextInputType.number,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ),
                                               decoration: InputDecoration(
                                                 hintStyle:
-                                                    TextStyle(fontSize: 16),
+                                                    TextStyle(fontSize: 14),
                                                 hintText:
                                                     'Ví dụ: 1 Ly, 500g,...',
                                               ),
@@ -739,7 +788,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                     "+/- Tối thiểu",
                                                     style: TextStyle(
                                                       fontFamily: "SF Semibold",
-                                                      fontSize: 18,
+                                                      fontSize: 16,
                                                     ),
                                                   ),
                                                 ],
@@ -748,6 +797,9 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                             TextFormField(
                                               keyboardType:
                                                   TextInputType.number,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ),
                                               decoration: InputDecoration(
                                                 hintStyle:
                                                     TextStyle(fontSize: 16),
@@ -775,7 +827,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                     "Mua nhiều nhất",
                                                     style: TextStyle(
                                                       fontFamily: "SF Semibold",
-                                                      fontSize: 18,
+                                                      fontSize: 16,
                                                     ),
                                                   ),
                                                 ],
@@ -784,9 +836,12 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                             TextFormField(
                                               keyboardType:
                                                   TextInputType.number,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ),
                                               decoration: InputDecoration(
                                                 hintStyle:
-                                                    TextStyle(fontSize: 16),
+                                                    TextStyle(fontSize: 14),
                                                 hintText: '0',
                                               ),
                                               controller: _maximumQuantity,
@@ -807,7 +862,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                     "Mua ít nhất",
                                                     style: TextStyle(
                                                       fontFamily: "SF Semibold",
-                                                      fontSize: 18,
+                                                      fontSize: 16,
                                                     ),
                                                   ),
                                                 ],
@@ -816,9 +871,12 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                             TextFormField(
                                               keyboardType:
                                                   TextInputType.number,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ),
                                               decoration: InputDecoration(
                                                 hintStyle:
-                                                    TextStyle(fontSize: 16),
+                                                    TextStyle(fontSize: 14),
                                                 hintText: '0',
                                               ),
                                               controller: _minimumQuantity,
@@ -843,16 +901,19 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                     "Miêu tả sản phẩm",
                                                     style: TextStyle(
                                                       fontFamily: "SF Semibold",
-                                                      fontSize: 18,
+                                                      fontSize: 16,
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                             ),
                                             TextFormField(
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ),
                                               decoration: InputDecoration(
                                                 hintStyle:
-                                                    TextStyle(fontSize: 16),
+                                                    TextStyle(fontSize: 14),
                                                 hintText: 'Ví dụ: 330ml / Chai',
                                               ),
                                               controller: _packDescription,
@@ -886,7 +947,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                           style: TextStyle(
                               color: Colors.black,
                               fontFamily: "SF Bold",
-                              fontSize: 18),
+                              fontSize: 16),
                         ),
                         style: ElevatedButton.styleFrom(
                           primary: MaterialColors.primary,

@@ -5,6 +5,7 @@ import 'package:flutter_switch/flutter_switch.dart';
 class AccordionMenuItem extends StatefulWidget {
   String name;
   String price;
+  String image;
   bool isActive;
   bool isBorder;
   AccordionMenuItem(
@@ -12,6 +13,7 @@ class AccordionMenuItem extends StatefulWidget {
       required this.name,
       required this.price,
       required this.isBorder,
+      required this.image,
       required this.isActive})
       : super(key: key);
 
@@ -41,37 +43,70 @@ class _AccordionMenuItemState extends State<AccordionMenuItem> {
           : null,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
+          Expanded(
+            child: Container(
+                child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  widget.name,
-                  style: TextStyle(
-                    fontFamily: "SF Medium",
-                    fontSize: 17,
-                  ),
+                Container(
+                  // width: 100,
+                  // padding: EdgeInsets.only(left: 10),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(8),
+                        bottomLeft: Radius.circular(8),
+                        topRight: Radius.circular(8),
+                        bottomRight: Radius.circular(8),
+                      ),
+
+                      // padding: const EdgeInsets.only(right: 15, left: 0),
+                      child: Image(
+                        // color:70olors.red,
+                        height: 55,
+                        width: 55,
+                        fit: BoxFit.cover,
+                        image: NetworkImage(widget.image),
+                      )),
                 ),
-                Padding(padding: EdgeInsets.all(2)),
-                Text(
-                  widget.price + "đ",
-                  style: TextStyle(
-                      fontFamily: "SF Medium",
-                      fontSize: 16,
-                      color: Colors.black45),
-                )
+                Padding(padding: EdgeInsets.all(5)),
+                Expanded(
+                    child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        maxLines: 1,
+                        widget.name,
+                        style: TextStyle(
+                          fontFamily: "SF Medium",
+                          overflow: TextOverflow.ellipsis,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.all(3)),
+                      Text(
+                        widget.price + "đ",
+                        style: TextStyle(
+                            fontFamily: "SF Medium",
+                            fontSize: 15,
+                            color: Colors.black45),
+                      )
+                    ],
+                  ),
+                ))
               ],
-            ),
+            )),
           ),
           Container(
             child: FlutterSwitch(
-              width: 55.0,
+              width: 50.0,
               height: 25.0,
               valueFontSize: 15.0,
-              toggleSize: 20.0,
+              toggleSize: 17.0,
               value: status,
               borderRadius: 30.0,
               padding: 4.0,

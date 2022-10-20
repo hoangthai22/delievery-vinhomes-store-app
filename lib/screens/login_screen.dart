@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -23,6 +25,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _validUserName = true;
   String _textPass = '';
   FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  FirebaseFirestore db = FirebaseFirestore.instance;
   bool isLoading = false;
   String? _errorText(TextEditingController controller) {
     // at any time, we can get the text from _controller.value.text
@@ -39,31 +43,55 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
-  handleSignInEmail() {
+  Future<String?> handleSignInEmail() async {
     FocusScope.of(context).unfocus();
     setState(() {
       isLoading = true;
     });
     User user;
-
-    auth
-        .signInWithEmailAndPassword(email: _textUserName, password: _textPass)
-        .then((value) => {
-              if (value != null)
-                {
-                  user = value.user!,
-                  context
-                      .read<AppProvider>()
-                      .setUserLogin(user.email.toString()),
-                  print(user.email),
-                  setState(() {
-                    isLoading = false;
-                  }),
-                  Navigator.pushReplacementNamed(context, '/home')
-                }
-              else
-                {print("sai mat khau")}
-            });
+    try {
+      String? fcmToken = await messaging.getToken();
+      auth
+          .signInWithEmailAndPassword(email: _textUserName, password: _textPass)
+          .then((value) => {
+                print("value: " + value.toString()),
+                if (value != null)
+                  {
+                    print("fcmToken: ${fcmToken}"),
+                    user = value.user!,
+                    context
+                        .read<AppProvider>()
+                        .setUserLogin(user.email.toString()),
+                    print(user.email),
+                    db.collection("users").doc(user.uid).set({
+                      'email': user.email,
+                      'fcmToken': fcmToken,
+                    }),
+                    setState(() {
+                      isLoading = false;
+                    }),
+                    Navigator.pushReplacementNamed(context, '/home')
+                  }
+                else
+                  {print("sai mat khau")},
+                setState(() {
+                  isLoading = false;
+                }),
+              });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print("weak-password");
+      } else if (e.code == 'email-already-in-use') {
+        print("email-already-in-use");
+      } else if (e.code == 'user-not-found') {
+        print("user-not-found");
+      } else if (e.code == 'wrong-password') {
+        print("wrong-password");
+      }
+      print(e);
+    } catch (e) {
+      print(e);
+    }
   }
 
   Widget _entryField(

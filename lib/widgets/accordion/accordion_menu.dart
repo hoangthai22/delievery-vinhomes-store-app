@@ -40,7 +40,7 @@ class _AccordionMenuState extends State<AccordionMenu> {
                 widget.title,
                 style: TextStyle(
                   fontFamily: "SF SemiBold",
-                  fontSize: 18,
+                  fontSize: 16,
                   color: Colors.black,
                 ),
                 textAlign: TextAlign.center,
@@ -52,7 +52,7 @@ class _AccordionMenuState extends State<AccordionMenu> {
                     widget.count + " món",
                     style: TextStyle(
                       fontFamily: "SF Medium",
-                      fontSize: 16,
+                      fontSize: 14,
                       color: Colors.black45,
                     ),
                     textAlign: TextAlign.center,

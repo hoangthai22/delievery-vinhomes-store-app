@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:store_app/apis/apiService.dart';
 import 'package:store_app/constants/Theme.dart';
@@ -47,6 +48,7 @@ class _MenuModal extends State<MenuModal> {
   List<ProductMenuModel> productOutOfMenus = [];
   List<CheckedItem> productCheckedList = [];
   bool _isLoadingCircle = true;
+  bool _isLoadingSubmit = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -81,12 +83,25 @@ class _MenuModal extends State<MenuModal> {
   }
 
   hanldeCallback() {
+    setState(() {
+      _isLoadingSubmit = true;
+    });
     ApiServices.postJoinMenu(productCheckedList, widget.menuId)
         .then((value) => {
               if (value != null)
-                {print("success"), Navigator.pop(context), widget.function("")}
+                {
+                  Navigator.pop(context),
+                  setState(() {
+                    _isLoadingSubmit = false;
+                  }),
+                  widget.function("")
+                }
               else
-                {setState(() {})}
+                {
+                  setState(() {
+                    _isLoadingSubmit = false;
+                  })
+                }
             });
   }
 
@@ -125,6 +140,7 @@ class _MenuModal extends State<MenuModal> {
           child: SingleChildScrollView(
             child: Column(
               // physics: NeverScrollableScrollPhysics(),
+
               children: <Widget>[
                 if (!_isLoadingCircle) ...[
                   Container(
@@ -141,12 +157,34 @@ class _MenuModal extends State<MenuModal> {
                         product: item,
                         function: (id) => {hanldeChecked(id)},
                       ),
-                    ),
+                    )
                 ]
               ],
             ),
           ),
         ),
+        if (!_isLoadingCircle && productOutOfMenus.isEmpty)
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.5 - 60,
+            child: Center(
+                child: Container(
+              child: Column(
+                children: [
+                  Icon(Icons.no_food_rounded),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Không có sản phầm nào phù hợp",
+                    style: TextStyle(
+                        color: MaterialColors.black,
+                        fontFamily: "SF Regular",
+                        fontSize: 15),
+                  )
+                ],
+              ),
+            )),
+          ),
         Positioned(
             bottom: 0,
             child: Container(
@@ -212,6 +250,17 @@ class _MenuModal extends State<MenuModal> {
                     ),
                   ],
                 ))),
+        if (_isLoadingSubmit) ...[
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.white.withOpacity(0.5),
+            child: SpinKitRing(
+              color: MaterialColors.primary,
+              size: 50.0,
+            ),
+          )
+        ],
         if (_isLoadingCircle)
           Center(
               child: Container(
