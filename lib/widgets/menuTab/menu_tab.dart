@@ -93,6 +93,7 @@ class _MenuTabState extends State<MenuTab> {
               if (value != null)
                 {
                   setState(() {
+                    print(value);
                     menuDetailList = value;
                     isLoading = false;
                   })
@@ -193,14 +194,14 @@ class _MenuTabState extends State<MenuTab> {
                                                             .secondary,
                                                   )),
                                               child: Text(
-                                                "Buổi sáng",
+                                                pro.name.toString(),
                                                 style: TextStyle(
                                                     color: tabActive == index
                                                         ? Colors.white
                                                         : MaterialColors
                                                             .secondary,
-                                                    fontFamily: "SF Bold",
-                                                    fontSize: 17),
+                                                    fontFamily: "SF SemiBold",
+                                                    fontSize: 16),
                                               )),
                                         );
                                       }),
@@ -279,6 +280,7 @@ class _MenuTabState extends State<MenuTab> {
                                               ? false
                                               : true,
                                           name: item["name"],
+                                          image: item["image"],
                                           price: currencyFormatter
                                               .format((item["pricePerPack"]!)
                                                   .toInt())

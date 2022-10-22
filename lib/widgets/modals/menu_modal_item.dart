@@ -39,9 +39,9 @@ class _MenuModalItemState extends State<MenuModalItem> {
           decoration: BoxDecoration(
               border:
                   Border(bottom: BorderSide(color: Colors.black12, width: 1))),
-          margin: const EdgeInsets.only(left: 0, right: 15, bottom: 7, top: 7),
+          padding: const EdgeInsets.only(left: 0, right: 15, bottom: 7, top: 7),
           child: Container(
-              height: 90,
+              height: 80,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -50,6 +50,7 @@ class _MenuModalItemState extends State<MenuModalItem> {
                     child: Row(children: [
                       Container(
                         // width: 100,
+                        padding: EdgeInsets.only(left: 10),
                         child: ClipRRect(
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(8),
@@ -61,8 +62,8 @@ class _MenuModalItemState extends State<MenuModalItem> {
                             // padding: const EdgeInsets.only(right: 15, left: 0),
                             child: Image(
                               // color:70olors.red,
-                              height: 80,
-                              width: 80,
+                              height: 70,
+                              width: 70,
                               fit: BoxFit.cover,
                               image: NetworkImage(widget.product.image!),
                             )),
@@ -75,7 +76,7 @@ class _MenuModalItemState extends State<MenuModalItem> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: MediaQuery.of(context).size.width - 180,
+                            width: MediaQuery.of(context).size.width - 190,
                             child: Text(
                               widget.product.name!,
                               maxLines: 1,
@@ -89,9 +90,10 @@ class _MenuModalItemState extends State<MenuModalItem> {
                           Container(
                             child: Text(
                               currencyFormatter
-                                  .format(
-                                      (widget.product.pricePerPack!).toInt())
-                                  .toString(),
+                                      .format((widget.product.pricePerPack!)
+                                          .toInt())
+                                      .toString() +
+                                  "₫",
                               style: TextStyle(
                                   fontFamily: "SF Semibold",
                                   fontSize: 16,
@@ -109,6 +111,7 @@ class _MenuModalItemState extends State<MenuModalItem> {
                       onChanged: (bool? value) {
                         setState(() {
                           isChecked = value!;
+                          widget.function(widget.product.id!);
                         });
                       },
                     ),

@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:provider/provider.dart';
 import 'package:store_app/constants/Theme.dart';
 import 'package:store_app/provider/appProvider.dart';
+import 'package:store_app/screens/update_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -15,25 +18,147 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+
   bool status = true;
+  void handleToggle(val) {
+    if (status) {
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          actions: <Widget>[
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.only(left: 15, right: 15, bottom: 7),
+              child: Text(
+                'Bạn có chắc muốn đóng cửa hàng?',
+                style: TextStyle(
+                    color: Colors.black, fontFamily: "SF Bold", fontSize: 17),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
+              child: Text(
+                "Bạn sẽ không thể nhận được đơn hàng cho đến khi mở lại",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "SF Regular",
+                    fontSize: 14),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(5),
+              child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 40,
+                        child: ElevatedButton(
+                          child: Text(
+                            "Hủy",
+                            style: TextStyle(
+                                color: Colors.black45,
+                                fontFamily: "SF Medium",
+                                fontSize: 16),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.white,
+                            textStyle: TextStyle(color: Colors.black),
+                            shadowColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                                side: BorderSide(
+                                    color: Colors.black45, width: 1)),
+                          ),
+                          onPressed: () => {Navigator.pop(context)},
+                        ),
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.all(7)),
+                    Expanded(
+                      child: SizedBox(
+                        height: 40,
+                        child: ElevatedButton(
+                          child: const Text(
+                            "Đồng ý",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "SF Medium",
+                                fontSize: 16),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: MaterialColors.primary,
+                            textStyle: TextStyle(color: Colors.black),
+                            shadowColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          onPressed: () => {
+                            Navigator.pop(context),
+                            setState(() {
+                              status = val;
+                            })
+                          },
+                        ),
+                      ),
+                    )
+                  ]),
+            )
+          ],
+        ),
+      );
+    } else {
+      setState(() {
+        status = val;
+      });
+    }
+  }
+
+  void handleLogout() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    // await auth.signOut();
+
+    var docSnapshot =
+        await db.collection("users").doc(auth.currentUser!.uid).get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data();
+      var fcmToken = data?['fcmToken'];
+      var userId = auth.currentUser!.uid;
+      await db
+          .collection("users")
+          .doc(auth.currentUser!.uid)
+          .delete()
+          .then((value) => {
+                auth.signOut().then(
+                    (value) => {Navigator.pushReplacementNamed(context, '/')})
+              });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    String image = context.read<AppProvider>().getAvatar.toString();
     return Consumer<AppProvider>(builder: (context, provider, child) {
       return Scaffold(
         body: Container(
             color: Colors.white,
-            padding: EdgeInsets.only(top: 30),
+            padding: const EdgeInsets.only(top: 30),
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   Container(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           top: 15, bottom: 15, left: 15, right: 15),
                       child: Row(
                         children: [
                           Container(
-                            width: 90,
-                            margin: EdgeInsets.only(right: 15),
+                            width: 70,
+                            height: 70,
+                            margin: const EdgeInsets.only(right: 15),
                             child: ClipRRect(
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(50),
@@ -47,32 +172,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   // color:70olors.red,
                                   height: 70,
                                   width: 70,
-                                  fit: BoxFit.contain,
-                                  image: NetworkImage(
-                                      "https://firebasestorage.googleapis.com/v0/b/deliveryfood-9c436.appspot.com/o/icon%2Fshopping-store.png?alt=media&token=e632dd62-971c-4ba2-8f72-bca9a101d663"),
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(image),
                                 )),
                           ),
                           Expanded(
-                            child: Text(
-                              context.read<AppProvider>().getUserId,
-                              style: TextStyle(
-                                  color: MaterialColors.black,
-                                  fontFamily: "SF Bold",
-                                  fontSize: 22),
-                            ),
-                          )
+                              child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            UpdateProfileScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        context.read<AppProvider>().getName,
+                                        style: const TextStyle(
+                                            color: MaterialColors.black,
+                                            fontFamily: "SF Bold",
+                                            fontSize: 22),
+                                      ),
+                                      Padding(padding: EdgeInsets.all(2)),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Chỉnh sửa tài khoản",
+                                            style: const TextStyle(
+                                                color: Colors.black54,
+                                                fontFamily: "SF Medium",
+                                                fontSize: 15),
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Icon(
+                                            Icons.arrow_forward_ios,
+                                            size: 12,
+                                            color: Colors.black54,
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  )))
                         ],
                       )),
                   Container(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           top: 15, bottom: 15, left: 15, right: 15),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            child: Container(
-                                child: Column(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -92,10 +255,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       fontSize: 15),
                                 )
                               ],
-                            )),
+                            ),
                           ),
-                          Container(
-                              child: Row(
+                          Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -107,152 +269,222 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     fontSize: 18),
                               ),
                               Padding(padding: EdgeInsets.all(4)),
-                              Container(
-                                child: FlutterSwitch(
-                                  width: 60.0,
-                                  height: 30.0,
-                                  valueFontSize: 15.0,
-                                  toggleSize: 25.0,
-                                  value: status,
-                                  borderRadius: 30.0,
-                                  padding: 3.5,
-                                  activeColor: Colors.green,
-                                  // showOnOff: true,
-                                  onToggle: (val) {
-                                    setState(() {
-                                      status = val;
-                                    });
-                                  },
-                                ),
+                              FlutterSwitch(
+                                width: 60.0,
+                                height: 30.0,
+                                valueFontSize: 15.0,
+                                toggleSize: 25.0,
+                                value: status,
+                                borderRadius: 30.0,
+                                padding: 3.5,
+                                activeColor: Colors.green,
+                                // showOnOff: true,
+                                onToggle: (val) {
+                                  handleToggle(val);
+                                  // setState(() {
+                                  //   status = val;
+                                  // });
+                                },
                               )
                             ],
-                          )),
+                          ),
                         ],
                       )),
                   Container(
-                      color: MaterialColors.grey, padding: EdgeInsets.all(5)),
+                      color: MaterialColors.grey,
+                      padding: const EdgeInsets.all(5)),
                   Container(
-                    padding: EdgeInsets.all(15),
+                    padding: const EdgeInsets.all(15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Cài đặt",
                           style: TextStyle(
                               color: Colors.black54,
                               fontFamily: "SF Medium",
                               fontSize: 17),
                         ),
-                        Padding(padding: EdgeInsets.all(10)),
-                        Container(
-                          child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.storefront,
-                                        size: 30,
-                                      ),
-                                      Padding(padding: EdgeInsets.all(5)),
-                                      Text(
-                                        "Cài đặt cửa hàng",
-                                        style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: "SF SemiBold",
-                                            fontSize: 18),
-                                      )
-                                    ],
+                        const Padding(padding: EdgeInsets.all(15)),
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.storefront,
+                                    size: 24,
                                   ),
-                                ),
-                                Icon(
-                                  Icons.arrow_forward_ios_rounded,
-                                  size: 18,
-                                  color: Colors.black45,
-                                ),
-                              ]),
-                        ),
+                                  Padding(padding: EdgeInsets.all(8)),
+                                  InkWell(
+                                    onTap: () {},
+                                    child: Text(
+                                      "Cài đặt cửa hàng",
+                                      style: TextStyle(
+                                          color: Colors.black87,
+                                          fontFamily: "SF SemiBold",
+                                          fontSize: 16),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              const Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                size: 16,
+                                color: Colors.black45,
+                              ),
+                            ]),
                         Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                                 border: Border(
                                     bottom: BorderSide(
                                         color: Colors.black12, width: 1))),
                             margin: EdgeInsets.only(top: 20, bottom: 20)),
-                        Container(
-                          child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.history,
-                                        size: 30,
-                                      ),
-                                      Padding(padding: EdgeInsets.all(5)),
-                                      Text(
-                                        "Lịch sử đơn hàng",
-                                        style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: "SF SemiBold",
-                                            fontSize: 18),
-                                      ),
-                                    ],
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.history,
+                                    size: 24,
                                   ),
-                                ),
-                                Icon(
-                                  Icons.arrow_forward_ios_rounded,
-                                  size: 18,
-                                  color: Colors.black45,
-                                ),
-                              ]),
-                        ),
+                                  Padding(padding: EdgeInsets.all(8)),
+                                  Text(
+                                    "Lịch sử đơn hàng",
+                                    style: TextStyle(
+                                        color: Colors.black87,
+                                        fontFamily: "SF SemiBold",
+                                        fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                size: 16,
+                                color: Colors.black45,
+                              ),
+                            ]),
                         Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                                 border: Border(
                                     bottom: BorderSide(
                                         color: Colors.black12, width: 1))),
-                            margin: EdgeInsets.only(top: 20, bottom: 20)),
+                            margin: const EdgeInsets.only(top: 20, bottom: 20)),
                         InkWell(
                           onTap: () {
-                            Navigator.pushReplacementNamed(context, '/login');
-                            auth.signOut();
-                          },
-                          child: Container(
-                            child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
+                            showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text(
+                                  'Đăng xuất ngay',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: "SF Bold",
+                                      fontSize: 18),
+                                ),
+                                actions: <Widget>[
                                   Container(
+                                    padding: EdgeInsets.all(5),
                                     child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.logout,
-                                          size: 30,
-                                        ),
-                                        Padding(padding: EdgeInsets.all(5)),
-                                        Text(
-                                          "Đăng xuất",
-                                          style: TextStyle(
-                                              color: Colors.black87,
-                                              fontFamily: "SF SemiBold",
-                                              fontSize: 18),
-                                        ),
-                                      ],
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: SizedBox(
+                                              height: 40,
+                                              child: ElevatedButton(
+                                                child: Text(
+                                                  "Hủy",
+                                                  style: TextStyle(
+                                                      color: Colors.black45,
+                                                      fontFamily: "SF Medium",
+                                                      fontSize: 16),
+                                                ),
+                                                style: ElevatedButton.styleFrom(
+                                                  primary: Colors.white,
+                                                  textStyle: TextStyle(
+                                                      color: Colors.black),
+                                                  shadowColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                      side: BorderSide(
+                                                          color: Colors.black45,
+                                                          width: 1)),
+                                                ),
+                                                onPressed: () =>
+                                                    {Navigator.pop(context)},
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(padding: EdgeInsets.all(7)),
+                                          Expanded(
+                                            child: SizedBox(
+                                              height: 40,
+                                              child: ElevatedButton(
+                                                child: const Text(
+                                                  "Đồng ý",
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontFamily: "SF Medium",
+                                                      fontSize: 16),
+                                                ),
+                                                style: ElevatedButton.styleFrom(
+                                                  primary:
+                                                      MaterialColors.primary,
+                                                  textStyle: TextStyle(
+                                                      color: Colors.black),
+                                                  shadowColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                  ),
+                                                ),
+                                                onPressed: () =>
+                                                    {handleLogout()},
+                                              ),
+                                            ),
+                                          )
+                                        ]),
+                                  )
+                                ],
+                              ),
+                            );
+                          },
+                          child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.logout,
+                                      size: 24,
                                     ),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    size: 18,
-                                    color: Colors.black45,
-                                  ),
-                                ]),
-                          ),
+                                    const Padding(padding: EdgeInsets.all(8)),
+                                    const Text(
+                                      "Đăng xuất",
+                                      style: TextStyle(
+                                          color: Colors.black87,
+                                          fontFamily: "SF SemiBold",
+                                          fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  size: 16,
+                                  color: Colors.black45,
+                                ),
+                              ]),
                         )
                       ],
                     ),
