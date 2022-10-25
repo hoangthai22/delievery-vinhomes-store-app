@@ -83,6 +83,8 @@ class LandingScreen extends StatelessWidget {
             .then((value) => {
                   store = value,
                   print("store: " + store.toString()),
+                  print(store.image),
+
                   context.read<AppProvider>().setName(store.name),
                   context.read<AppProvider>().setAvatar(store.image),
                   context.read<AppProvider>().setStoreModel(store),

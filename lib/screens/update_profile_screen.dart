@@ -554,44 +554,45 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                 // obscureText: isPassword,
                               ),
                               Padding(padding: EdgeInsets.all(15)),
-                              Row(
-                                children: [
-                                  Text(
-                                    "Mật khẩu",
-                                    style: TextStyle(
-                                      fontFamily: "SF Semibold",
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  Padding(padding: EdgeInsets.all(2)),
-                                  Text(
-                                    "*",
-                                    style: TextStyle(
-                                        color: Colors.red, fontSize: 20),
-                                  )
-                                ],
-                              ),
-                              TextFormField(
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Tên đăng nhập không được để trống";
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  hintStyle: TextStyle(fontSize: 16),
-                                ),
-                                controller: _password,
-                                // controller: _name != null
-                                //     ? TextEditingController(text: _name)
-                                //     : null,
-                                // initialValue: _name != null ? _name : null,
-                                onChanged: (e) => {
-                                  // setState(() => {_name.text = e})
-                                },
-                                // obscureText: isPassword,
-                              ),
-                              Padding(padding: EdgeInsets.all(15)),
+                              // Row(
+                              //   children: [
+                              //     Text(
+                              //       "Mật khẩu",
+                              //       style: TextStyle(
+                              //         fontFamily: "SF Semibold",
+                              //         fontSize: 18,
+                              //       ),
+                              //     ),
+                              //     Padding(padding: EdgeInsets.all(2)),
+                              //     Text(
+                              //       "*",
+                              //       style: TextStyle(
+                              //           color: Colors.red, fontSize: 20),
+                              //     )
+                              //   ],
+                              // ),
+                              // TextFormField(
+                              //   obscureText: true,
+                              //   readOnly: true,
+                              //   validator: (value) {
+                              //     if (value == null || value.isEmpty) {
+                              //       return "Mật khẩu không được để trống";
+                              //     }
+                              //     return null;
+                              //   },
+                              //   decoration: InputDecoration(
+                              //     hintStyle: TextStyle(fontSize: 16),
+                              //   ),
+                              //   controller: _password,
+                              //   // controller: _name != null
+                              //   //     ? TextEditingController(text: _name)
+                              //   //     : null,
+                              //   // initialValue: _name != null ? _name : null,
+                              //   onChanged: (e) => {
+                              //     // setState(() => {_name.text = e})
+                              //   },
+                              //   // obscureText: isPassword,
+                              // ),
                               Row(
                                 children: [
                                   Expanded(
@@ -790,73 +791,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                       )),
                                 ],
                               ),
-                              Padding(padding: EdgeInsets.all(15)),
-                              // Container(
-                              //   padding: EdgeInsets.all(10),
-                              // ),
-                              // Row(
-                              //   children: [
-                              //     Expanded(
-                              //         flex: 1,
-                              //         child: Column(
-                              //           children: [
-                              //             Container(
-                              //               child: Row(
-                              //                 children: [
-                              //                   Text(
-                              //                     "Danh mục",
-                              //                     style: TextStyle(
-                              //                       fontFamily: "SF Semibold",
-                              //                       fontSize: 18,
-                              //                     ),
-                              //                   ),
-                              //                   Padding(
-                              //                       padding: EdgeInsets.all(2)),
-                              //                   Text(
-                              //                     "*",
-                              //                     style: TextStyle(
-                              //                         color: Colors.red,
-                              //                         fontSize: 18),
-                              //                   )
-                              //                 ],
-                              //               ),
-                              //             ),
-                              //             DropdownButtonFormField<String>(
-                              //               isExpanded: true,
-                              //               validator: (value) {
-                              //                 if (value == null ||
-                              //                     value.isEmpty) {
-                              //                   return "Danh mục không được để trống";
-                              //                 }
-                              //                 return null;
-                              //               },
-                              //               value: _category == ''
-                              //                   ? null
-                              //                   : _category,
-                              //               isDense: true,
-                              //               onChanged: (value) {
-                              //                 setState(() {
-                              //                   print(value);
-                              //                   _category = value!;
-                              //                   if (value.isEmpty) {
-                              //                     valid = false;
-                              //                   } else {
-                              //                     valid = true;
-                              //                   }
-                              //                 });
-                              //               },
-                              //               items: listCategory.map((value) {
-                              //                 return DropdownMenuItem<String>(
-                              //                   value: value.id,
-                              //                   child:
-                              //                       Text(value.name.toString()),
-                              //                 );
-                              //               }).toList(),
-                              //             ),
-                              //           ],
-                              //         )),
-                              //   ],
-                              // ),
                             ],
                           ),
                         ),
