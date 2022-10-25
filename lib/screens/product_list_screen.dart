@@ -231,11 +231,13 @@ class _ProductListScreenState extends State<ProductListScreen>
                                                 setState(() {
                                                   listProduct = value;
                                                   isLoading = false;
+                                                  _isLoadingMore = false;
                                                   isListFull = false;
+                                                  page++;
                                                 }),
                                               }
                                           });
-                                }))
+                                })),
                           }
                       },
                     ),
@@ -313,7 +315,9 @@ class _ProductListScreenState extends State<ProductListScreen>
                                                     setState(() {
                                                       listProduct = value;
                                                       isLoading = false;
+                                                      _isLoadingMore = false;
                                                       isListFull = false;
+                                                      page++;
                                                     }),
                                                   }
                                               });

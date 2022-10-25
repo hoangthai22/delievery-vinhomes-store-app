@@ -28,6 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   FirebaseFirestore db = FirebaseFirestore.instance;
   bool isLoading = false;
+  bool isLogin = true;
   String? _errorText(TextEditingController controller) {
     // at any time, we can get the text from _controller.value.text
     final text = controller.value.text;
@@ -68,13 +69,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       'fcmToken': fcmToken,
                     }),
                     setState(() {
+                      isLogin = true;
                       isLoading = false;
                     }),
                     Navigator.pushReplacementNamed(context, '/home')
                   }
-                else
-                  {print("sai mat khau")},
+              })
+          .catchError((onError) => {
+                print("loi roi" + onError.toString()),
                 setState(() {
+                  isLogin = false;
                   isLoading = false;
                 }),
               });
@@ -91,6 +95,9 @@ class _LoginScreenState extends State<LoginScreen> {
       print(e);
     } catch (e) {
       print(e);
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -175,6 +182,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _submitButton() {
     return InkWell(
       onTap: () {
+        setState(() {
+          isLogin = true;
+        });
         if (_formKey.currentState!.validate()) {
           // Navigator.pushNamed(context, '/home');
           handleSignInEmail();
@@ -215,20 +225,16 @@ class _LoginScreenState extends State<LoginScreen> {
     return RichText(
       textAlign: TextAlign.center,
       text: const TextSpan(
-          text: 'Vin',
+          text: 'Cộng Đồng ',
           style: TextStyle(
               fontFamily: "SF Heavy",
-              fontSize: 30,
+              fontSize: 28,
               // fontWeight: FontWeight.w700,
               color: Color(0xffe46b10)),
           children: [
             TextSpan(
-              text: 'GP ',
+              text: 'Chung Cư ',
               style: TextStyle(color: Colors.black, fontSize: 30),
-            ),
-            TextSpan(
-              text: 'Deliver',
-              style: TextStyle(color: Color(0xffe46b10), fontSize: 30),
             ),
           ]),
     );
@@ -260,6 +266,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         _title(),
                         const SizedBox(height: 50),
                         _emailPasswordWidget(),
+                        if (!isLogin)
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                                "Tên đăng nhập hoặc mật khẩu không đúng!",
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    fontFamily: "SF Medium",
+                                    color: Colors.red)),
+                          ),
                         const SizedBox(height: 20),
                         _submitButton(),
                         Container(

@@ -10,7 +10,7 @@ class AppProvider with ChangeNotifier {
   bool status = false;
 
   void setStatus(bool bool) {
-    status = true;
+    status = bool;
     notifyListeners();
   }
 
