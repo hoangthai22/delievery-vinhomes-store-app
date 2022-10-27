@@ -47,7 +47,14 @@ class _OrderTabState extends State<OrderTab> {
           )
         else if (widget.tab == 2)
           OrderListShipping(
-            onTap: (id) => {},
+            onTap: (order) => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OrderDetailScreen(order: order),
+                ),
+              )
+            },
             storeId: widget.storeId,
           )
         else if (widget.tab == 3)

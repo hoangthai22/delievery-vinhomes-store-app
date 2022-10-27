@@ -31,19 +31,79 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                     color: MaterialColors.black, fontFamily: "SF Bold"),
               ),
-              bottom: const TabBar(
+              bottom: TabBar(
                 tabs: <Widget>[
                   Tab(
                     // icon: Icon(Icons.cloud_outlined),
-                    text: "Hiện tại",
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.only(top: 3),
+                          width: 85,
+                          child: Text(
+                            "Hiện tại",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        if (context.read<AppProvider>().getCountOrder > 0)
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: 15,
+                              width: 15,
+                              padding: EdgeInsets.all(0),
+                              decoration: BoxDecoration(
+                                color: Color.fromARGB(255, 243, 93, 82),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Text(
+                                context
+                                    .read<AppProvider>()
+                                    .getCountOrder
+                                    .toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          )
+                      ],
+                    ),
+                    // text: "Hiện tại",
                   ),
                   Tab(
                     // icon: Icon(Icons.beach_access_sharp),
-                    text: "Đang giao",
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.only(top: 3),
+                          width: 85,
+                          child: Text(
+                            "Đang giao",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   Tab(
                     // icon: Icon(Icons.brightness_5_sharp),
-                    text: "Lịch sử",
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.only(top: 3),
+                          width: 85,
+                          child: Text(
+                            "Lịch sử",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

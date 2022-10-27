@@ -82,7 +82,6 @@ class LandingScreen extends StatelessWidget {
         ApiServices.getStoreById(success.email)
             .then((value) => {
                   store = value,
-                  print("store: " + store.toString()),
                   print(store.image),
 
                   context.read<AppProvider>().setName(store.name),

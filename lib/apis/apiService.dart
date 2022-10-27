@@ -200,6 +200,32 @@ class ApiServices {
     }
   }
 
+  //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/orders/1
+  static Future<dynamic> putCancelOrder(String orderId) async {
+    //12c9cd48-8cb7-4145-8fd9-323e20b329dd
+    try {
+      Map<String, String> headers = {"Content-type": "application/json"};
+      var response = await http.put(
+          Uri.parse(
+            '${baseURL}/${ORDER}/${orderId}',
+          ),
+          headers: headers,
+          body: convert.jsonEncode({
+            {"orderId": orderId, "statusId": "5"}
+          }));
+
+      if (response.statusCode == 200) {
+        String body = response.body;
+        print("body: " + body);
+        return body;
+      } else if (response.statusCode == 404 || response.statusCode == 409) {
+        return null;
+      }
+    } catch (e) {
+      print('Error with status code: ${e}');
+    }
+  }
+
   //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/store-management/stores/storeId?storeId=store2%40gmail.com
   static Future<dynamic> getStoreById(
     String id,

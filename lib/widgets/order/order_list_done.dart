@@ -4,7 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:store_app/apis/apiService.dart';
 import 'package:store_app/constants/Theme.dart';
-import 'package:store_app/constants/variable.dart';
+import 'package:store_app/constants/Variable.dart';
 import 'package:store_app/models/orderModel.dart';
 
 class OrderListDone extends StatefulWidget {
@@ -27,12 +27,12 @@ class _OrderListDoneState extends State<OrderListDone> {
       // menus = [];
       isLoading = true;
     });
-    ApiServices.getListOrderByStatus(widget.storeId, StatusId.DONE, 1, 100)
+    ApiServices.getListOrderByStatus(widget.storeId, Status.DONE, 1, 100)
         .then((ordersDone) => {
               if (ordersDone != null)
                 {
                   ApiServices.getListOrderByStatus(
-                          widget.storeId, StatusId.CANCEL, 1, 100)
+                          widget.storeId, Status.CANCEL, 1, 100)
                       .then((ordersCancel) => {
                             if (ordersCancel != null)
                               {
@@ -152,50 +152,42 @@ class _OrderListDoneState extends State<OrderListDone> {
                                             : "Đã hủy",
                                         style: TextStyle(
                                             fontFamily: "SF Bold",
-                                            fontSize: 17,
+                                            fontSize: 16,
                                             color: order.statusName == "Done"
                                                 ? Colors.green
                                                 : Colors.red[600]),
                                       ),
                                     ]),
                               ),
-                              Container(
-                                child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        currencyFormatter
-                                                .format((order.total!).toInt())
-                                                .toString() +
-                                            "₫",
-                                        style: TextStyle(
-                                            fontFamily: "SF Bold",
-                                            fontSize: 17,
-                                            color: Colors.black),
-                                      ),
-                                      Padding(padding: EdgeInsets.all(5)),
-                                      Icon(
-                                        Icons.arrow_forward_ios_outlined,
-                                        size: 15,
-                                        color: Colors.black38,
-                                      )
-                                    ]),
-                              ),
+                              Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "${currencyFormatter.format((order.total! - order.shipCost!).toInt())}₫",
+                                      style: const TextStyle(
+                                          fontFamily: "SF Bold",
+                                          fontSize: 17,
+                                          color: Colors.black),
+                                    ),
+                                    const Padding(padding: EdgeInsets.all(5)),
+                                    const Icon(
+                                      Icons.arrow_forward_ios_outlined,
+                                      size: 15,
+                                      color: Colors.black38,
+                                    )
+                                  ]),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 12,
                           ),
-                          Container(
-                            child: Text(
-                              "Đã giao lúc " +
-                                  order.time.toString().split(" ")[1],
-                              style: TextStyle(
-                                  fontFamily: "SF Medium",
-                                  fontSize: 16,
-                                  color: Colors.black38),
-                            ),
+                          Text(
+                            "Đã giao lúc " +
+                                order.time.toString().split(" ")[1],
+                            style: TextStyle(
+                                fontFamily: "SF Medium",
+                                fontSize: 15,
+                                color: Colors.black38),
                           ),
                         ]),
                   ),

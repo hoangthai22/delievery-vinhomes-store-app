@@ -41,6 +41,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:682756485581:android:ac402ebc538d20a0285484",
+        "android_client_info": {
+          "package_name": "com.example.vh_shipper_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "682756485581-rad14qg8epoc0ae1kbtc1fhtp24tkngf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtVQhRZ2Ao_Ho01UP3iY3DOKtes-8mUMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "682756485581-rad14qg8epoc0ae1kbtc1fhtp24tkngf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

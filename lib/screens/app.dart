@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:store_app/models/notificationModel.dart';
 import 'package:store_app/provider/appProvider.dart';
@@ -36,7 +37,7 @@ class AppState extends State<App> {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   PushNotificationModel? _notificationInfo;
   FirebaseFirestore db = FirebaseFirestore.instance;
-  // late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   void registerNotification() async {
     await Firebase.initializeApp();
@@ -56,11 +57,10 @@ class AppState extends State<App> {
         setState(() {
           _notificationInfo = notification;
         });
-        print("body: ${notification.body}");
-        print("title: ${notification.title}");
+
         if (notification != null) {
-          // _showNotification(
-          //     _notificationInfo!.title!, _notificationInfo!.body!);
+          _showNotification(
+              _notificationInfo!.title!, _notificationInfo!.body!);
         }
       });
     } else {
@@ -68,49 +68,38 @@ class AppState extends State<App> {
     }
   }
 
-  // Future<void> _showNotification(String title, String content) async {
-  //   final AndroidNotificationDetails androidPlatformChannelSpecifics =
-  //       AndroidNotificationDetails('your channel id', 'your channel name',
-  //           channelDescription: 'your channel description',
-  //           importance: Importance.max,
-  //           priority: Priority.high,
-  //           icon: '@drawable/logo_transparent',
-  //           tag: "TWE",
-  //           ticker: 'ticker');
+  Future<void> _showNotification(String title, String content) async {
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            icon: '@drawable/logoicon',
+            tag: "Cộng Đồng Chung Cư",
+            ticker: 'ticker');
 
-  //   final NotificationDetails platformChannelSpecifics =
-  //       NotificationDetails(android: androidPlatformChannelSpecifics);
-  //   await flutterLocalNotificationsPlugin
-  //       .show(0, title, content, platformChannelSpecifics, payload: 'item x');
-  // }
+    final NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin
+        .show(0, title, content, platformChannelSpecifics, payload: 'item x');
+  }
 
   @override
   void initState() {
-    // var initializationSettingsAndroid =
-    //     AndroidInitializationSettings('@mipmap/ic_launcher');
-    // var initializationSettingsIOS = IOSInitializationSettings();
-    // var initializationSettings = InitializationSettings(
-    //     android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    // flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    // flutterLocalNotificationsPlugin.initialize(initializationSettings,
-    //     onSelectNotification: (value) {
-    //   Navigator.pushNamed(context, "/notification");
-    // });
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = DarwinInitializationSettings();
+    var initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onDidReceiveNotificationResponse: (value) {
+      Navigator.pushNamed(context, "/notification");
+    });
 
     registerNotification();
     checkForInitialMessage();
     super.initState();
-
-    // UserModel user;
-    // ApiServices.getProfileByUsername(context.read<AppProvider>().getUid)
-    //     .then((value) => {
-    //           print("value12321: $value"),
-    //           if (value != null)
-    //             {
-    //               user = value,
-    //               context.read<AppProvider>().setAvatar(user.image)
-    //             }
-    //         });
   }
 
   checkForInitialMessage() async {

@@ -6,11 +6,17 @@ class AppProvider with ChangeNotifier {
   String uid = "";
   String name = "";
   String avatar = "";
+  int countOrder = 0;
   late StoreModel storeModel = StoreModel();
   bool status = false;
 
   void setStatus(bool bool) {
     status = bool;
+    notifyListeners();
+  }
+
+  void setCountOrder(int count) {
+    countOrder = count;
     notifyListeners();
   }
 
@@ -49,5 +55,6 @@ class AppProvider with ChangeNotifier {
   String get getAvatar => avatar;
   String get getUid => uid;
   String get getName => name;
+  int get getCountOrder => countOrder;
   StoreModel get getStoreModel => storeModel;
 }

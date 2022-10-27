@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       isLogin = true;
                       isLoading = false;
                     }),
-                    Navigator.pushReplacementNamed(context, '/home')
+                    Navigator.pushReplacementNamed(context, '/')
                   }
               })
           .catchError((onError) => {
