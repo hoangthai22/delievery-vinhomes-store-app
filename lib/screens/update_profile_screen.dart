@@ -56,6 +56,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   String _buildingId = '';
   TextEditingController _password = TextEditingController();
   TextEditingController _phone = TextEditingController();
+  TextEditingController _description = TextEditingController();
   TextEditingController _openTime = TextEditingController();
   TextEditingController _closeTime = TextEditingController();
   TextEditingController _building = TextEditingController();
@@ -790,6 +791,32 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                         ],
                                       )),
                                 ],
+                              ),
+                              Padding(padding: EdgeInsets.all(15)),
+                              Row(
+                                children: [
+                                  Text(
+                                    "Miêu tả cửa hàng",
+                                    style: TextStyle(
+                                      fontFamily: "SF Semibold",
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              TextFormField(
+                                maxLines: 5, minLines: 2,
+                                keyboardType: TextInputType.multiline,
+                                decoration: InputDecoration(
+                                  hintStyle: TextStyle(fontSize: 16),
+                                ),
+                                controller: _description,
+                                // controller: _name != null
+                                //     ? TextEditingController(text: _name)
+                                //     : null,
+                                // initialValue: _name != null ? _name : null,
+                                onChanged: (e) => {setState(() => {})},
+                                // obscureText: isPassword,
                               ),
                             ],
                           ),

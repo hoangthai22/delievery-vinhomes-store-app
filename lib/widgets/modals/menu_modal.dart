@@ -165,21 +165,25 @@ class _MenuModal extends State<MenuModal> {
         ),
         if (!_isLoadingCircle && productOutOfMenus.isEmpty)
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.5 - 60,
+            top: MediaQuery.of(context).size.height * 0.5 - 150,
             child: Center(
                 child: Container(
               child: Column(
                 children: [
-                  Icon(Icons.no_food_rounded),
-                  SizedBox(
-                    height: 10,
+                  Container(
+                    height: 150,
+                    width: 150,
+                    child: Image.asset(
+                      'assets/images/empty-food.png',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   Text(
                     "Không có sản phầm nào phù hợp",
                     style: TextStyle(
                         color: MaterialColors.black,
                         fontFamily: "SF Regular",
-                        fontSize: 15),
+                        fontSize: 16),
                   )
                 ],
               ),

@@ -49,9 +49,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   OrderDetailModel orderDetailModel = OrderDetailModel();
   List<ProductOrder> listProductOrder = [];
   String status = "";
+  int statusId = 0;
   Color? color;
   bool isLoading = true;
-
+  final GlobalKey<TooltipState> tooltipkey = GlobalKey<TooltipState>();
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   late StreamSubscription fcmListener;
   // PushNotificationModel? _notificationInfo;
@@ -69,8 +70,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 }).toList();
 
                 orderDetailModel.listStatusOrder!.map((dynamic item) {
-                  status = Status.getStatusName(item["name"]);
-                  color = Status.getStatusColor(item["name"]);
+                  statusId = item["status"];
+                  // status = Status.getStatusName(item["status"]);
+                  // color = Status.getStatusColor(item["status"]);
                 }).toList();
                 isLoading = false;
               })
@@ -234,17 +236,46 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 255, 255, 255),
-          centerTitle: true,
-          iconTheme: IconThemeData(
-            color: Colors.black, //change your color here
-          ),
-          title: Text(
-            "Chi tiết đơn hàng",
-            style:
-                TextStyle(color: MaterialColors.black, fontFamily: "SF Bold"),
-          ),
-        ),
+            // backgroundColor: Color.fromARGB(255, 255, 255, 255),
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Status.getStatusColor(widget.order.status)!
+                          .withOpacity(0.9),
+                      Status.getStatusColor(widget.order.status)!,
+                    ]),
+              ),
+            ),
+            toolbarHeight: 65,
+            centerTitle: false,
+            iconTheme: IconThemeData(
+              color: Colors.white, //change your color here
+            ),
+            elevation: 0,
+            title: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Đơn hàng #${widget.order.id.toString()}",
+                  style: const TextStyle(
+                      fontFamily: "SF Bold", fontSize: 16, color: Colors.white),
+                ),
+                SizedBox(
+                  height: 7,
+                ),
+                Text(
+                  Status.getStatusName(widget.order.status),
+                  style: const TextStyle(
+                      fontFamily: "SF Medium",
+                      fontSize: 14,
+                      color: Colors.white),
+                ),
+              ],
+            )),
         body: Stack(
           children: [
             if (!isLoading)
@@ -254,125 +285,74 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
-                      padding: EdgeInsets.all(15),
-                      color: Colors.white,
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(children: [
-                            Text(
-                              "FD-${widget.order.id.toString().substring(0, 4)}",
-                              style: const TextStyle(
-                                  fontFamily: "SF Bold",
-                                  fontSize: 16,
-                                  color: Colors.black54),
-                            ),
-                            const Padding(padding: EdgeInsets.all(5)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        padding: EdgeInsets.all(15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
                             Container(
-                              padding: const EdgeInsets.only(
-                                  left: 10, right: 10, bottom: 5, top: 5),
+                              width: 30,
+                              height: 30,
+                              child: Image.asset(
+                                getIconOrder(orderDetailModel.modeId),
+                                fit: BoxFit.cover,
+                              ),
                               decoration: BoxDecoration(
-                                color: color,
-                                borderRadius: BorderRadius.circular(15.0),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(50.0),
                               ),
-                              child: Text(
-                                status,
-                                style: const TextStyle(
-                                    fontFamily: "SF SemiBold",
-                                    fontSize: 14,
-                                    color: Colors.white),
-                              ),
-                            )
-                          ]),
-                          SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Text(
-                                "${listProductOrder.length} món ",
-                                style: const TextStyle(
-                                    fontFamily: "SF Bold",
-                                    fontSize: 15,
-                                    color: Colors.black),
-                              ),
-                              Text(
-                                " cho ${widget.order.customerName} ",
-                                style: const TextStyle(
-                                    fontFamily: "SF Medium",
-                                    fontSize: 15,
-                                    color: Colors.black),
-                              ),
-                            ],
-                          ),
-                          // SizedBox(height: 10),
-                          // Text(
-                          //   "Tài xế sẽ đên vào",
-                          //   style: const TextStyle(
-                          //       fontFamily: "SF Medium",
-                          //       fontSize: 14,
-                          //       color: Colors.black54),
-                          // ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      child: Text("Tài xế ",
-                          style: const TextStyle(
-                              fontFamily: "SF Bold",
-                              fontSize: 18,
-                              color: Colors.black54)),
-                      padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 25, bottom: 10),
-                    ),
-                    Container(
-                      color: Colors.white,
-                      padding: EdgeInsets.all(15),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(right: 15),
-                                width: 45,
-                                child: Image.asset(
-                                  'assets/images/delivery-bike.png',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width - 190,
-                                child: Text("Phạm Văn Dương",
-                                    style: const TextStyle(
-                                        fontFamily: "SF SemiBold",
-                                        fontSize: 16,
-                                        color: Colors.black)),
-                              )
-                            ],
-                          ),
-                          InkWell(
-                            onTap: () {
-                              _makePhoneCall("0353270383");
-                            },
-                            child: Icon(
-                              Icons.phone_in_talk_outlined,
-                              size: 24,
-                              color: Color.fromRGBO(120, 120, 120, 1),
                             ),
-                          )
-                        ],
-                      ),
-                    ),
+                            SizedBox(width: 15),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(getModeName(orderDetailModel.modeId),
+                                        style: const TextStyle(
+                                            fontFamily: "SF SemiBold",
+                                            fontSize: 16,
+                                            color: Colors.black87)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Tooltip(
+                                      message: getTooltipMessage(orderDetailModel.modeId),
+                                      showDuration: const Duration(seconds: 5),
+                                      triggerMode: TooltipTriggerMode.tap,
+                                      child: Icon(
+                                        Icons.info_outline,
+                                        color: Colors.black38,
+                                        size: 14,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(getModeMessage(orderDetailModel.modeId),
+                                    style: const TextStyle(
+                                        fontFamily: "SF Regular",
+                                        fontSize: 14,
+                                        color: Colors.black87)),
+                              ],
+                            )
+                          ],
+                        )),
                     Container(
-                      child: Text("Tóm tắt đơn hàng ",
-                          style: const TextStyle(
-                              fontFamily: "SF Bold",
-                              fontSize: 18,
-                              color: Colors.black54)),
+                      // child: Text("Thông tin người nhận ",
+                      //     style: const TextStyle(
+                      //         fontFamily: "SF SemiBold",
+                      //         fontSize: 17,
+                      //         color: Colors.black54)),
                       padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 25, bottom: 10),
+                          left: 15, right: 15, top: 5, bottom: 10),
                     ),
                     Container(
                         color: Colors.white,
@@ -380,22 +360,40 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(widget.order.customerName!,
-                                style: const TextStyle(
-                                    fontFamily: "SF SemiBold",
-                                    fontSize: 16,
-                                    color: Colors.black87)),
                             Row(
                               children: [
-                                Text(widget.order.phone!,
-                                    style: const TextStyle(
-                                        fontFamily: "SF SemiBold",
-                                        fontSize: 14,
-                                        color:
-                                            Color.fromRGBO(120, 120, 120, 1))),
-                                SizedBox(
-                                  width: 10,
+                                Icon(
+                                  Icons.account_circle_rounded,
+                                  color: Color.fromRGBO(200, 200, 200, 1),
+                                  size: 35,
                                 ),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(widget.order.customerName!,
+                                        style: const TextStyle(
+                                            fontFamily: "SF SemiBold",
+                                            fontSize: 16,
+                                            color: Colors.black87)),
+                                    SizedBox(
+                                      height: 3,
+                                    ),
+                                    Text("Người nhận",
+                                        style: const TextStyle(
+                                            fontFamily: "SF Regular",
+                                            fontSize: 14,
+                                            color: Color.fromRGBO(
+                                                180, 180, 180, 1)))
+                                  ],
+                                )
+                              ],
+                            ),
+                            Row(
+                              children: [
                                 InkWell(
                                   onTap: () {
                                     _makePhoneCall(widget.order.phone ?? "");
@@ -403,7 +401,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                   child: Icon(
                                     Icons.phone_in_talk_outlined,
                                     size: 24,
-                                    color: Color.fromRGBO(120, 120, 120, 1),
+                                    color: Colors.green,
                                   ),
                                 )
                               ],
@@ -428,9 +426,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     Container(
                         padding: EdgeInsets.only(bottom: 20),
                         decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border(
-                                bottom: BorderSide(color: Colors.black12))),
+                          color: Colors.white,
+                        ),
                         child: Row(
                           children: [
                             Container(
@@ -460,6 +457,58 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             )
                           ],
                         )),
+                    Container(
+                      // child: Text("Tóm tắt đơn hàng ",
+                      //     style: const TextStyle(
+                      //         fontFamily: "SF SemiBold",
+                      //         fontSize: 17,
+                      //         color: Colors.black54)),
+                      padding: EdgeInsets.only(
+                          left: 15, right: 15, top: 5, bottom: 10),
+                    ),
+                    Container(
+                      color: Colors.white,
+                      padding:
+                          const EdgeInsets.only(top: 10, left: 15, right: 15),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(50),
+                                  bottomLeft: Radius.circular(50),
+                                  topRight: Radius.circular(50),
+                                  bottomRight: Radius.circular(50),
+                                ),
+
+                                // padding: const EdgeInsets.only(right: 15, left: 0),
+                                child: Image(
+                                  // color:40olors.red,
+                                  height: 30,
+                                  width: 30,
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(
+                                      "https://cdn-icons-png.flaticon.com/512/4507/4507529.png"),
+                                )),
+                          ),
+                          SizedBox(
+                            width: 15,
+                          ),
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Danh sách món",
+                                style: const TextStyle(
+                                    color: MaterialColors.black,
+                                    fontFamily: "SF Bold",
+                                    fontSize: 16)),
+                          ),
+                        ],
+                      ),
+                    ),
                     if (listProductOrder.isNotEmpty)
                       ...listProductOrder.map((e) {
                         return Container(
@@ -467,7 +516,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               color: Colors.white,
                             ),
                             padding: EdgeInsets.only(
-                                top: 18, bottom: 18, left: 15, right: 15),
+                                top: 18, bottom: 18, left: 22, right: 15),
                             child: Row(
                               children: [
                                 Expanded(
@@ -475,21 +524,21 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                     children: [
                                       Text("${e.quantity.toString()}",
                                           style: const TextStyle(
-                                              fontFamily: "SF Bold",
-                                              fontSize: 15,
+                                              fontFamily: "SF Medium",
+                                              fontSize: 16,
                                               color: Colors.black)),
                                       Padding(padding: EdgeInsets.all(2)),
                                       Text("x",
                                           style: const TextStyle(
-                                              fontFamily: "SF Bold",
-                                              fontSize: 15,
+                                              fontFamily: "SF Medium",
+                                              fontSize: 16,
                                               color: Color.fromRGBO(
                                                   100, 100, 100, 1))),
-                                      Padding(padding: EdgeInsets.all(7)),
+                                      Padding(padding: EdgeInsets.all(5)),
                                       Text(e.productName ?? "",
                                           style: const TextStyle(
-                                              fontFamily: "SF Bold",
-                                              fontSize: 15,
+                                              fontFamily: "SF Medium",
+                                              fontSize: 16,
                                               color: Colors.black)),
                                     ],
                                   ),
@@ -500,27 +549,18 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                             .toString() +
                                         "₫",
                                     style: const TextStyle(
-                                        fontFamily: "SF Bold",
-                                        fontSize: 15,
-                                        color:
-                                            Color.fromRGBO(100, 100, 100, 1))),
+                                        fontFamily: "SF Medium",
+                                        fontSize: 16,
+                                        color: Colors.black)),
                               ],
                             ));
                       }),
                     Container(
-                      child: Text("Chi tiết thanh toán ",
-                          style: const TextStyle(
-                              fontFamily: "SF Bold",
-                              fontSize: 18,
-                              color: Colors.black54)),
-                      padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 25, bottom: 10),
-                    ),
-                    Container(
                         decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border(
-                                bottom: BorderSide(color: Colors.black12))),
+                                bottom: BorderSide(color: Colors.black12),
+                                top: BorderSide(color: Colors.black12))),
                         padding: EdgeInsets.only(
                             left: 15, right: 15, top: 20, bottom: 20),
                         child: Row(
@@ -549,12 +589,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           ],
                         )),
                     Container(
+                        color: Colors.white,
                         padding: EdgeInsets.only(
                             left: 15, right: 15, top: 20, bottom: 20),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border(
-                                bottom: BorderSide(color: Colors.black12))),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -572,65 +609,136 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                     "₫",
                                 style: const TextStyle(
                                     fontFamily: "SF Bold",
-                                    fontSize: 16,
+                                    fontSize: 18,
                                     color: Colors.black87)),
                           ],
                         )),
                     Container(
+                      // child: Text("Tài xế ",
+                      //     style: const TextStyle(
+                      //         fontFamily: "SF SemiBold",
+                      //         fontSize: 17,
+                      //         color: Colors.black54)),
+                      padding: EdgeInsets.only(
+                          left: 15, right: 15, top: 5, bottom: 10),
+                    ),
+                    Container(
                       color: Colors.white,
-                      padding: EdgeInsets.only(bottom: 50, top: 50),
-                      // height: 100,
+                      // decoration: BoxDecoration(
+                      //     color: Colors.white,
+                      //     border: Border(
+                      //         bottom: BorderSide(color: Colors.black12))),
+                      padding: EdgeInsets.all(15),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          if (status == Status.getStatusName("ShipAccept")) ...[
-                            InkWell(
-                              onTap: () {
-                                showModal();
-                              },
-                              child: Column(
+                          Row(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(right: 15),
+                                width: 30,
+                                child: Image(
+                                  // color:70olors.red,
+                                  height: 30,
+                                  width: 30,
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(
+                                      "https://cdn-icons-png.flaticon.com/512/4353/4353254.png"),
+                                ),
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Phạm Văn Dương",
+                                      style: const TextStyle(
+                                          fontFamily: "SF SemiBold",
+                                          fontSize: 16,
+                                          color: Colors.black87)),
+                                  SizedBox(
+                                    height: 3,
+                                  ),
+                                  Text("Tài xế",
+                                      style: const TextStyle(
+                                          fontFamily: "SF Regular",
+                                          fontSize: 14,
+                                          color:
+                                              Color.fromRGBO(180, 180, 180, 1)))
+                                ],
+                              )
+                            ],
+                          ),
+                          InkWell(
+                            onTap: () {
+                              _makePhoneCall("0353270383");
+                            },
+                            child: Icon(
+                              Icons.phone_in_talk_outlined,
+                              size: 24,
+                              color: Colors.green,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    if (statusId == 0 ||
+                        statusId == 1 ||
+                        statusId == 2 ||
+                        statusId == 3) ...[
+                      Container(
+                        padding: EdgeInsets.only(bottom: 25, top: 25),
+                        // height: 100,
+
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  showModal();
+                                },
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.cancel_outlined,
+                                      size: 28,
+                                      color: Colors.red[800],
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text("Hủy đơn",
+                                        style: TextStyle(
+                                          fontFamily: "SF Medium",
+                                          fontSize: 16,
+                                          color: Colors.red[800],
+                                        ))
+                                  ],
+                                ),
+                              ),
+                              Column(
                                 children: [
                                   Icon(
-                                    Icons.cancel_outlined,
+                                    Icons.help_outline,
                                     size: 28,
-                                    color: Colors.red[800],
+                                    color: Color.fromRGBO(100, 100, 100, 1),
                                   ),
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  Text("Hủy đơn",
-                                      style: TextStyle(
-                                        fontFamily: "SF Medium",
-                                        fontSize: 16,
-                                        color: Colors.red[800],
-                                      ))
+                                  Text(
+                                    "Trợ giúp",
+                                    style: TextStyle(
+                                      fontFamily: "SF Medium",
+                                      fontSize: 16,
+                                      color: Color.fromRGBO(100, 100, 100, 1),
+                                    ),
+                                  )
                                 ],
                               ),
-                            ),
-                            Column(
-                              children: [
-                                Icon(
-                                  Icons.help_outline,
-                                  size: 28,
-                                  color: Color.fromRGBO(100, 100, 100, 1),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "Trợ giúp",
-                                  style: TextStyle(
-                                    fontFamily: "SF Medium",
-                                    fontSize: 16,
-                                    color: Color.fromRGBO(100, 100, 100, 1),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ]
-                        ],
+                            ]),
                       ),
-                    ),
+                    ]
                   ],
                 ),
               ),

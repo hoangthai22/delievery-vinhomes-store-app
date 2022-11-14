@@ -1,7 +1,3 @@
-import 'dart:async';
-
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -13,108 +9,66 @@ import 'package:store_app/constants/Variable.dart';
 import 'package:store_app/models/orderModel.dart';
 import 'package:store_app/provider/appProvider.dart';
 
-class OrderList extends StatefulWidget {
+class OrderListMode3 extends StatefulWidget {
   String storeId;
-  final Function(OrderModel order)? onTap;
-  OrderList({Key? key, required this.onTap, required this.storeId})
+  final Function(OrderModel product)? onTap;
+  OrderListMode3({Key? key, required this.onTap, required this.storeId})
       : super(key: key);
 
   @override
-  _OrderListState createState() => _OrderListState();
+  _OrderListMode3State createState() => _OrderListMode3State();
 }
 
-class _OrderListState extends State<OrderList> {
+class _OrderListMode3State extends State<OrderListMode3> {
   bool isLoading = true;
   List<OrderModel> orderList = [];
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  late StreamSubscription fcmListener;
   void getListOrder() {
     setState(() {
       // menus = [];
       isLoading = true;
     });
-    List<OrderModel> newOrderList = [];
-    ApiServices.getListOrder0123(widget.storeId, 1, 100).then((value) => {
-          if (value != null)
-            {
-              setState(() {
-                orderList = value;
-                orderList = orderList
-                    .where((element) =>
-                        element.modeId == "1" || element.modeId == "2")
-                    .toList();
 
-                context.read<AppProvider>().setCountOrder(orderList.length);
-                isLoading = false;
-              })
-            }
-          else
-            {
-              setState(() {
-                orderList = [];
-                isLoading = false;
-              })
-            }
-        });
-  }
-
-  void registerNotification() async {
-    await Firebase.initializeApp();
-    messaging = FirebaseMessaging.instance;
-
-    NotificationSettings settings = await messaging.requestPermission(
-        alert: true, badge: true, provisional: false, sound: true);
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      fcmListener = FirebaseMessaging.onMessage
-          .asBroadcastStream()
-          .listen((RemoteMessage message) {
-        getListOrder();
-      });
-    } else {
-      print("not permission");
-    }
+    setState(() {
+      orderList = context.read<AppProvider>().getOrderListMode3;
+      isLoading = false;
+    });
   }
 
   @override
   void initState() {
     // TODO: implement initState
-    registerNotification();
     super.initState();
     getListOrder();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    print('EVERYTHING disposed');
-    fcmListener.cancel();
-    // other disposes()
-  }
-
   Future<void> _refreshRandomNumbers() =>
-      ApiServices.getListOrder0123(widget.storeId, 1, 100).then((value) => {
-            if (value != null)
-              {
-                setState(() {
-                  orderList = value;
-                  orderList = orderList
-                      .where((element) =>
-                          element.modeId == "1" || element.modeId == "2")
-                      .toList();
-                  context.read<AppProvider>().setCountOrder(orderList.length);
-                  isLoading = false;
-                })
-              }
-            else
-              {
-                setState(() {
-                  orderList = [];
-                  isLoading = false;
-                })
-              }
-          });
+      Future.delayed(Duration(milliseconds: 500), () {
+        ApiServices.getListOrderByMode(widget.storeId, "3", 1, 100)
+            .then((value) => {
+                  if (value != null)
+                    {
+                      setState(() {
+                        orderList = value;
+                        context
+                            .read<AppProvider>()
+                            .setOrderListMode3(orderList);
+                        isLoading = false;
+                      })
+                    }
+                  else
+                    {
+                      setState(() {
+                        orderList = [];
+                        isLoading = false;
+                      })
+                    }
+                });
+      });
+
   @override
   Widget build(BuildContext context) {
+    // print(getTime("2022/10/13 22:50"));
+    final currencyFormatter = NumberFormat('#,##0', 'ID');
     return Consumer<AppProvider>(builder: (context, provider, child) {
       return Stack(
         children: [
@@ -277,7 +231,7 @@ class _OrderListState extends State<OrderList> {
                                                             .center,
                                                     children: [
                                                       const Text(
-                                                        "Tài xế sẽ đến vào ",
+                                                        "Đơn hàng đặt trước: ",
                                                         style: TextStyle(
                                                             fontFamily:
                                                                 "SF Regular",
@@ -286,9 +240,10 @@ class _OrderListState extends State<OrderList> {
                                                                 Colors.black),
                                                       ),
                                                       Text(
-                                                        changeEndTime(
-                                                            orderList[index]
-                                                                .time),
+                                                        // changeEndTime(
+                                                        //     orderList[index]
+                                                        //         .time),
+                                                        "T4, 11/16/2022",
                                                         style: const TextStyle(
                                                             fontFamily:
                                                                 "SF Bold",
@@ -304,14 +259,9 @@ class _OrderListState extends State<OrderList> {
                           )),
                 )),
           if (isLoading)
-            Container(
-              color: Colors.white.withOpacity(0.5),
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: SpinKitDualRing(
-                color: MaterialColors.primary,
-                size: 50.0,
-              ),
+            const SpinKitDualRing(
+              color: MaterialColors.primary,
+              size: 50.0,
             ),
           if (!isLoading && orderList.isEmpty)
             Container(

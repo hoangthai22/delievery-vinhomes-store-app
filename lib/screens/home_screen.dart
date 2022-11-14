@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:store_app/apis/apiService.dart';
 import 'package:store_app/constants/Theme.dart';
+import 'package:store_app/models/orderModel.dart';
 import 'package:store_app/provider/appProvider.dart';
 import 'package:store_app/widgets/menuTab/order_tab.dart';
 
@@ -15,6 +17,26 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
+  @override
+  void initState() {
+    // TODO: implement initState
+    List<OrderModel> orderListMode3 = [];
+    super.initState();
+    var storeId = context.read<AppProvider>().getUserId;
+    ApiServices.getListOrderByMode(storeId, "3", 1, 100).then((res) => {
+          if (res != null)
+            {
+              orderListMode3 = res,
+              if (orderListMode3.isNotEmpty)
+                {
+                  context.read<AppProvider>().setOrderListMode3(orderListMode3),
+                }
+            }
+          else
+            {context.read<AppProvider>().setOrderListMode3([])}
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(builder: (context, provider, child) {
@@ -95,13 +117,43 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Stack(
                       children: <Widget>[
                         Container(
-                          padding: EdgeInsets.only(top: 3),
+                          padding: EdgeInsets.only(top: 3, right: 5),
                           width: 85,
                           child: Text(
-                            "Lịch sử",
+                            "Đặt trước",
                             textAlign: TextAlign.center,
                           ),
                         ),
+                        if (context
+                            .read<AppProvider>()
+                            .getOrderListMode3
+                            .isNotEmpty)
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: 15,
+                              width: 15,
+                              padding: EdgeInsets.all(0),
+                              decoration: BoxDecoration(
+                                color: Color.fromARGB(255, 243, 93, 82),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Text(
+                                context
+                                    .read<AppProvider>()
+                                    .getOrderListMode3
+                                    .length
+                                    .toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          )
                       ],
                     ),
                   ),

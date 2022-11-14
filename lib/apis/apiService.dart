@@ -62,6 +62,93 @@ class ApiServices {
     }
   }
 
+  //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/store-management/stores/byStoreId/orders-preparing?storeId=store2%40gmail.com&pageIndex=1&pageSize=20
+  static Future<dynamic> getListOrder0123(String storeId, page, size) async {
+    try {
+      var response = await http.get(
+        Uri.parse(
+            '${baseURL}/store-management/${STORE}/byStoreId/orders-preparing?storeId=${storeId}&pageIndex=${page}&pageSize=${size}'),
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> body = convert.jsonDecode(response.body);
+        List<OrderModel> orders =
+            body.map((dynamic item) => OrderModel.fromJson(item)).toList();
+        return orders;
+      } else if (response.statusCode == 404) {
+        print("404");
+        return [];
+      }
+    } catch (e) {
+      print('Error with status code: ${e}');
+    }
+  }
+
+  //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/store-management/stores/byStoreId/orders-delivering?storeId=store4%40gmail.com&pageIndex=1&pageSize=20
+  static Future<dynamic> getListOrder478(String storeId, page, size) async {
+    try {
+      var response = await http.get(
+        Uri.parse(
+            '${baseURL}/store-management/${STORE}/byStoreId/orders-delivering?storeId=${storeId}&pageIndex=${page}&pageSize=${size}'),
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> body = convert.jsonDecode(response.body);
+        List<OrderModel> orders =
+            body.map((dynamic item) => OrderModel.fromJson(item)).toList();
+        return orders;
+      } else if (response.statusCode == 404) {
+        print("404");
+        return [];
+      }
+    } catch (e) {
+      print('Error with status code: ${e}');
+    }
+  }
+
+  //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/store-management/stores/byStoreId/orders-completed?storeId=store4%40gmail.com&pageIndex=1&pageSize=20
+  static Future<dynamic> getListOrderDone(String storeId, page, size) async {
+    try {
+      var response = await http.get(
+        Uri.parse(
+            '${baseURL}/store-management/${STORE}/byStoreId/orders-completed?storeId=${storeId}&pageIndex=${page}&pageSize=${size}'),
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> body = convert.jsonDecode(response.body);
+        List<OrderModel> orders =
+            body.map((dynamic item) => OrderModel.fromJson(item)).toList();
+        return orders;
+      } else if (response.statusCode == 404) {
+        print("404");
+        return [];
+      }
+    } catch (e) {
+      print('Error with status code: ${e}');
+    }
+  }
+
+  //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/store-management/stores/byStoreId/byModeId/order?storeId=store2%40gmail.com&modeId=3&pageIndex=1&pageSize=20
+  static Future<dynamic> getListOrderByMode(
+      String storeId, mode, page, size) async {
+    try {
+      var response = await http.get(
+        Uri.parse(
+            '${baseURL}/store-management/${STORE}/byStoreId/byModeId/order?storeId=${storeId}&modeId=${mode}&pageIndex=${page}&pageSize=${size}'),
+      );
+      if (response.statusCode == 200) {
+        print("200");
+        List<dynamic> body = convert.jsonDecode(response.body);
+        List<OrderModel> orders =
+            body.map((dynamic item) => OrderModel.fromJson(item)).toList();
+        return orders;
+      } else if (response.statusCode == 404) {
+        print("404");
+        return [];
+      }
+      print(response.statusCode);
+    } catch (e) {
+      print('Error with status code: ${e}');
+    }
+  }
+
   //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/orders/stores/byStoreId/status/ByStatusId?statusId=3&storeId=s4&pageIndex=1&pageSize=20
   static Future<dynamic> getListOrderByStatus(
       String storeId, String statusId, page, size) async {

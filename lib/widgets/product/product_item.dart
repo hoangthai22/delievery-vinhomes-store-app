@@ -103,9 +103,9 @@ class _ProductItemState extends State<ProductItem> {
                                 Container(
                                   padding: EdgeInsets.only(top: 5, bottom: 5),
                                   child: Text(
-                                    widget.product.unit != ""
-                                        ? widget.product.unit!
-                                        : "",
+                                    widget.product.packDescription != ""
+                                        ? widget.product.packDescription!
+                                        : widget.product.unit!,
                                     style: TextStyle(
                                         fontFamily: "SF Regular",
                                         fontSize: 15,

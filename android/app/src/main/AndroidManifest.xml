@@ -4,9 +4,9 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
    <application
-        android:label="Cộng Đồng Chung Cư"
+        android:label="CDCC Merchant"
         android:name="${applicationName}"
-        android:icon="@drawable/logoicon">
+        android:icon="@mipmap/launcher_icon">
          <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/logoicon" /> 

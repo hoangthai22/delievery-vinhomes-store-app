@@ -32,21 +32,32 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
   List<CategoryModel> listCategory = [];
   List<UnitModel> listUnit = [
     UnitModel(id: "1", value: "Kg"),
+    UnitModel(id: "4", value: "Gam"),
     UnitModel(id: "2", value: "Ly"),
     UnitModel(id: "3", value: "Chai"),
-    UnitModel(id: "4", value: "Gam"),
     UnitModel(id: "5", value: "Hộp"),
     UnitModel(id: "6", value: "Hủ"),
     UnitModel(id: "7", value: "Cái"),
+    UnitModel(id: "8", value: "Phần"),
   ];
-  // {id: "1", value: "Kg"},
-  // {"id": "2", "value": "Ly"},
-  // {"id": "3", "value": "Chai"},
-  // {"id": "4", "value": "Gam"},
-  // {"id": "5", "value": "Hộp"},
-  // {"id": "6", "value": "Hủ"},
-  // {"id": "7", "value": "Cái"},
+  List listPackNetWeight = [];
 
+  List listPackNetWeightKg = [
+    {"id": "1", "value": "0.1kg", "pack": 0.1},
+    {"id": "2", "value": "0.2kg", "pack": 0.2},
+    {"id": "3", "value": "0.5kg", "pack": 0.5},
+    {"id": "4", "value": "1kg", "pack": 1},
+    {"id": "5", "value": "2kg", "pack": 2},
+    {"id": "6", "value": "5kg", "pack": 5},
+    {"id": "7", "value": "10kg", "pack": 10},
+  ];
+  List listPackNetWeightGam = [
+    {"id": "1", "value": "50g", "pack": 50},
+    {"id": "2", "value": "100g", "pack": 100},
+    {"id": "3", "value": "200g", "pack": 200},
+    {"id": "4", "value": "500g", "pack": 500},
+    {"id": "5", "value": "1000g", "pack": 1000},
+  ];
   final _formKey = GlobalKey<FormState>();
   File? _image;
   bool valid = false;
@@ -58,15 +69,17 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
   String _unit = '';
   String _id = '';
   // String _name = '';
-  TextEditingController _name = TextEditingController();
+  String packNetWeightItem = "";
+  final TextEditingController _name = TextEditingController();
   // TextEditingController _unit = TextEditingController();
   // double _pricePerPack = 0;
-  TextEditingController _pricePerPack = TextEditingController();
-  TextEditingController _packNetWeight = TextEditingController();
-  TextEditingController _maximumQuantity = TextEditingController();
-  TextEditingController _minimumQuantity = TextEditingController();
-  TextEditingController _minimumDeIn = TextEditingController();
-  TextEditingController _packDescription = TextEditingController();
+  final TextEditingController _pricePerPack = TextEditingController();
+  final TextEditingController _packNetWeight = TextEditingController();
+  final TextEditingController _maximumQuantity = TextEditingController();
+  final TextEditingController _minimumQuantity = TextEditingController();
+  final TextEditingController _minimumDeIn = TextEditingController();
+  final TextEditingController _packDescription = TextEditingController();
+  final TextEditingController _description = TextEditingController();
   // String _price = '';
   // double _packNetWeight = 0;
   // double _maximumQuantity = 0;
@@ -102,8 +115,16 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                     .format((widget.productModel.minimumDeIn!).toInt())
                     .toString();
                 _unit = widget.productModel.unit.toString();
+                if (_unit == listUnit[0].value) {
+                  listPackNetWeight = listPackNetWeightKg;
+                  packNetWeightItem = widget.productModel.packDescription!;
+                } else if (_unit == listUnit[1].value) {
+                  listPackNetWeight = listPackNetWeightGam;
+                  packNetWeightItem = widget.productModel.packDescription!;
+                }
                 _category = widget.productModel.categoryId.toString();
                 isImage = widget.productModel.image.toString();
+                _description.text = widget.productModel.description!;
                 isLoadingSubmit = false;
               })
             }
@@ -120,17 +141,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
 
   Future<void> hanldeUpdate() async {
     FocusScope.of(context).unfocus();
-    // print(img64);
-    // print("_category" + _category);
-    // print("_unit" + _unit);
-    // print("_name" + _name.text);
-    // print("_pricePerPack" + _pricePerPack.text);
-    // // print("_price" + _price);
-    // print("_packNetWeight" + _packNetWeight.toString());
-    // print("_maximumQuantity" + _maximumQuantity.toString());
-    // print("_minimumQuantity" + _minimumQuantity.toString());
-    // print("_minimumDeIn" + _minimumDeIn.toString());
-    // print("_packDescription" + _packDescription.toString());
+
     var img64 = null;
     var base64String = null;
     setState(() {
@@ -151,23 +162,23 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
         image: img64 ?? base64String,
         name: _name.text,
         categoryId: _category,
-        packNetWeight: double.parse(_packNetWeight.text) ?? 0.0,
-        packDescription: _packDescription.text ?? "",
-        maximumQuantity: double.parse(_maximumQuantity.text) ?? 1.0,
-        minimumQuantity: double.parse(_minimumQuantity.text) ?? 1.0,
-        minimumDeIn: double.parse(_minimumDeIn.text) ?? 1.0,
-        unit: _unit ?? "",
-        pricePerPack: double.parse(_pricePerPack.text) ?? 0.0,
+        packNetWeight: double.parse(_packNetWeight.text),
+        packDescription: _packDescription.text,
+        maximumQuantity: double.parse(_maximumQuantity.text),
+        minimumQuantity: double.parse(_minimumQuantity.text),
+        minimumDeIn:
+            _minimumDeIn.text != "" ? double.parse(_minimumDeIn.text) : 1,
+        unit: _unit,
+        pricePerPack: double.parse(_pricePerPack.text),
         storeId: _storeId,
         rate: 0.0,
-        description: "");
+        description: _description.text);
     Map valueMap;
     ApiServices.putUpdateProduct(product, widget.productModel.id ?? "")
         .then((value) => {
               if (value != null)
                 {
                   valueMap = convert.jsonDecode(value),
-                  print("value: " + valueMap.toString()),
                   setState(() {
                     isLoadingSubmit = false;
 
@@ -211,7 +222,6 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
         // Navigator.of(context).pop();
       });
     } on PlatformException catch (e) {
-      print(e);
       Navigator.of(context).pop();
     }
   }
@@ -526,10 +536,10 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                 return null;
                               },
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 15,
                               ),
                               decoration: InputDecoration(
-                                hintStyle: TextStyle(fontSize: 14),
+                                hintStyle: TextStyle(fontSize: 15),
                                 hintText: 'Ví dụ: Cơm Tấm',
                               ),
                               controller: _name,
@@ -574,7 +584,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                           controller: _pricePerPack,
                                           keyboardType: TextInputType.number,
                                           style: TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 15,
                                           ),
                                           validator: (value) {
                                             if (value == null ||
@@ -637,6 +647,19 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                               } else {
                                                 valid = true;
                                               }
+                                              if (_unit == listUnit[0].value) {
+                                                listPackNetWeight =
+                                                    listPackNetWeightKg;
+                                              } else if (_unit ==
+                                                  listUnit[1].value) {
+                                                listPackNetWeight =
+                                                    listPackNetWeightGam;
+                                              } else {
+                                                listPackNetWeight = [];
+                                              }
+                                              packNetWeightItem = "";
+                                              _packNetWeight.text = "0";
+                                              _packDescription.text = "";
                                             });
                                           },
                                           items: listUnit.map((value) {
@@ -645,7 +668,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                               child: Text(
                                                 value.value.toString(),
                                                 style: TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 15,
                                                 ),
                                               ),
                                             );
@@ -700,7 +723,6 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                           isDense: true,
                                           onChanged: (value) {
                                             setState(() {
-                                              print(value);
                                               _category = value!;
                                               if (value.isEmpty) {
                                                 valid = false;
@@ -715,7 +737,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                               child: Text(
                                                 value.name.toString(),
                                                 style: TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 15,
                                                 ),
                                               ),
                                             );
@@ -725,6 +747,84 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                     )),
                               ],
                             ),
+                            Container(
+                              padding: EdgeInsets.all(10),
+                            ),
+                            if (listPackNetWeight.length > 0)
+                              Row(
+                                children: [
+                                  Expanded(
+                                      flex: 1,
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  "Đóng gói",
+                                                  style: TextStyle(
+                                                    fontFamily: "SF Semibold",
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                    padding: EdgeInsets.all(2)),
+                                                Text(
+                                                  "*",
+                                                  style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize: 18),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          DropdownButtonFormField<String>(
+                                            isExpanded: true,
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return "Đóng gói không được để trống";
+                                              }
+                                              return null;
+                                            },
+                                            value: packNetWeightItem == ''
+                                                ? null
+                                                : packNetWeightItem,
+                                            isDense: true,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                packNetWeightItem = value!;
+                                                _packDescription.text = value;
+                                                for (var element
+                                                    in listPackNetWeight) {
+                                                  if (element["value"] ==
+                                                      value) {
+                                                    var tmp = element["pack"]
+                                                        .toDouble();
+                                                    _packNetWeight.text =
+                                                        tmp.toString();
+                                                  }
+                                                }
+                                                if (value.isEmpty) {
+                                                  valid = false;
+                                                } else {
+                                                  valid = true;
+                                                }
+                                              });
+                                            },
+                                            items:
+                                                listPackNetWeight.map((value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value["value"],
+                                                child: Text(
+                                                    value["value"].toString()),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ],
+                                      )),
+                                ],
+                              ),
                           ],
                         ),
                       ),
@@ -749,42 +849,6 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                               child: Row(
                                                 children: [
                                                   Text(
-                                                    "Đóng gói",
-                                                    style: TextStyle(
-                                                      fontFamily: "SF Semibold",
-                                                      fontSize: 16,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            TextFormField(
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                              ),
-                                              decoration: InputDecoration(
-                                                hintStyle:
-                                                    TextStyle(fontSize: 14),
-                                                hintText:
-                                                    'Ví dụ: 1 Ly, 500g,...',
-                                              ),
-                                              controller: _packNetWeight,
-                                              onChanged: (e) => {},
-                                              // obscureText: isPassword,
-                                            )
-                                          ],
-                                        )),
-                                    Padding(padding: EdgeInsets.all(15)),
-                                    Expanded(
-                                        flex: 1,
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              child: Row(
-                                                children: [
-                                                  Text(
                                                     "+/- Tối thiểu",
                                                     style: TextStyle(
                                                       fontFamily: "SF Semibold",
@@ -798,7 +862,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                               keyboardType:
                                                   TextInputType.number,
                                               style: TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 15,
                                               ),
                                               decoration: InputDecoration(
                                                 hintStyle:
@@ -807,7 +871,6 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                               ),
                                               controller: _minimumDeIn,
                                               onChanged: (e) => {},
-                                              // obscureText: isPassword,
                                             )
                                           ],
                                         )),
@@ -837,11 +900,11 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                               keyboardType:
                                                   TextInputType.number,
                                               style: TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 15,
                                               ),
                                               decoration: InputDecoration(
                                                 hintStyle:
-                                                    TextStyle(fontSize: 14),
+                                                    TextStyle(fontSize: 15),
                                                 hintText: '0',
                                               ),
                                               controller: _maximumQuantity,
@@ -872,11 +935,11 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                               keyboardType:
                                                   TextInputType.number,
                                               style: TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 15,
                                               ),
                                               decoration: InputDecoration(
                                                 hintStyle:
-                                                    TextStyle(fontSize: 14),
+                                                    TextStyle(fontSize: 15),
                                                 hintText: '0',
                                               ),
                                               controller: _minimumQuantity,
@@ -908,15 +971,19 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                               ),
                                             ),
                                             TextFormField(
+                                              keyboardType:
+                                                  TextInputType.multiline,
+                                              minLines: 2,
+                                              maxLines: 5,
                                               style: TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 15,
                                               ),
                                               decoration: InputDecoration(
                                                 hintStyle:
-                                                    TextStyle(fontSize: 14),
-                                                hintText: 'Ví dụ: 330ml / Chai',
+                                                    TextStyle(fontSize: 15),
+                                                hintText: '',
                                               ),
-                                              controller: _packDescription,
+                                              controller: _description,
                                               onChanged: (e) => {},
                                               // obscureText: isPassword,
                                             )

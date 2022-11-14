@@ -7,6 +7,7 @@ import 'package:store_app/models/orderModel.dart';
 import 'package:store_app/screens/order_detail_screen.dart';
 import 'package:store_app/widgets/order/order_list.dart';
 import 'package:store_app/widgets/order/order_list_done.dart';
+import 'package:store_app/widgets/order/order_list_mode3.dart';
 import 'package:store_app/widgets/order/order_list_shipping.dart';
 
 class OrderTab extends StatefulWidget {
@@ -58,8 +59,15 @@ class _OrderTabState extends State<OrderTab> {
             storeId: widget.storeId,
           )
         else if (widget.tab == 3)
-          OrderListDone(
-            onTap: (id) => {},
+          OrderListMode3(
+            onTap: (order) => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OrderDetailScreen(order: order),
+                ),
+              )
+            },
             storeId: widget.storeId,
           ),
       ],

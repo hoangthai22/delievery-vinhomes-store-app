@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:store_app/models/orderModel.dart';
 import 'package:store_app/models/storeModel.dart';
 
 class AppProvider with ChangeNotifier {
@@ -7,6 +8,7 @@ class AppProvider with ChangeNotifier {
   String name = "";
   String avatar = "";
   int countOrder = 0;
+  List<OrderModel> orderListMode3 = [];
   late StoreModel storeModel = StoreModel();
   bool status = false;
 
@@ -17,6 +19,11 @@ class AppProvider with ChangeNotifier {
 
   void setCountOrder(int count) {
     countOrder = count;
+    notifyListeners();
+  }
+
+  void setOrderListMode3(List<OrderModel> order) {
+    orderListMode3 = order;
     notifyListeners();
   }
 
@@ -56,5 +63,6 @@ class AppProvider with ChangeNotifier {
   String get getUid => uid;
   String get getName => name;
   int get getCountOrder => countOrder;
+  List<OrderModel> get getOrderListMode3 => orderListMode3;
   StoreModel get getStoreModel => storeModel;
 }

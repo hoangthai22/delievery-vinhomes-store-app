@@ -7,6 +7,7 @@ class OrderDetailModel {
   double? shipCost;
   String? note;
   String? paymentName;
+  String? modeId;
   String? time;
   List? listProInMenu;
   List? listStatusOrder;
@@ -21,6 +22,7 @@ class OrderDetailModel {
     this.shipCost,
     this.time,
     this.listProInMenu,
+    this.modeId,
     this.listStatusOrder,
   });
 
@@ -34,6 +36,7 @@ class OrderDetailModel {
       paymentName: json['paymentName'],
       shipCost: json['shipCost'] == null ? 0.0 : json['shipCost'].toDouble(),
       time: json['time'],
+      modeId: json['modeId'],
       listProInMenu: json['listProInMenu'],
       listStatusOrder: json['listStatusOrder'],
     );

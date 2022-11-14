@@ -30,14 +30,17 @@ class _ProductListState extends State<ProductList> {
           )
         else ...[
           Container(
-            padding: EdgeInsets.only(top: 50),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.no_food_rounded),
-                SizedBox(
-                  height: 10,
+                Container(
+                  height: 150,
+                  width: 150,
+                  child: Image.asset(
+                    'assets/images/empty-order.png',
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 Text(
                   "Không có sản phầm nào!",

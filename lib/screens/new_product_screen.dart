@@ -27,14 +27,32 @@ class NewProductScreen extends StatefulWidget {
 
 class _NewProductScreenState extends State<NewProductScreen> {
   List<CategoryModel> listCategory = [];
+  List listPackNetWeight = [];
   List listUnit = [
     {"id": "1", "value": "Kg"},
+    {"id": "4", "value": "Gam"},
     {"id": "2", "value": "Ly"},
     {"id": "3", "value": "Chai"},
-    {"id": "4", "value": "Gam"},
     {"id": "5", "value": "Hộp"},
     {"id": "6", "value": "Hủ"},
     {"id": "7", "value": "Cái"},
+    {"id": "8", "value": "Phần"},
+  ];
+  List listPackNetWeightKg = [
+    {"id": "1", "value": "0.1kg", "pack": 0.1},
+    {"id": "2", "value": "0.2kg", "pack": 0.2},
+    {"id": "3", "value": "0.5kg", "pack": 0.5},
+    {"id": "4", "value": "1kg", "pack": 1},
+    {"id": "5", "value": "2kg", "pack": 2},
+    {"id": "6", "value": "5kg", "pack": 5},
+    {"id": "7", "value": "10kg", "pack": 10},
+  ];
+  List listPackNetWeightGam = [
+    {"id": "1", "value": "50g", "pack": 50},
+    {"id": "2", "value": "100g", "pack": 100},
+    {"id": "3", "value": "200g", "pack": 200},
+    {"id": "4", "value": "500g", "pack": 500},
+    {"id": "5", "value": "1000g", "pack": 1000},
   ];
   final _formKey = GlobalKey<FormState>();
   File? _image;
@@ -48,10 +66,12 @@ class _NewProductScreenState extends State<NewProductScreen> {
   final _controllerPricePerPack = TextEditingController();
   String _price = '';
   double _packNetWeight = 0;
+  String packNetWeightItem = "";
   double _maximumQuantity = 0;
-  double _minimumQuantity = 0;
-  double _minimumDeIn = 0;
+  double _minimumQuantity = 1;
+  double _minimumDeIn = 1;
   String _packDescription = "";
+  String _description = "";
   void initState() {
     super.initState();
     ApiServices.getListCategory(1, 100).then((value) => {
@@ -81,12 +101,12 @@ class _NewProductScreenState extends State<NewProductScreen> {
           packDescription: _packDescription ?? "",
           maximumQuantity: _maximumQuantity ?? 1.0,
           minimumQuantity: _minimumQuantity ?? 1.0,
-          minimumDeIn: _minimumDeIn ?? 1.0,
+          minimumDeIn: _minimumDeIn == 0 ? 1.0 : _minimumDeIn,
           unit: _unit ?? "",
           pricePerPack: _pricePerPack ?? 0.0,
           storeId: storeId,
           rate: 0.0,
-          description: "");
+          description: _description);
 
       ApiServices.postCreateProduct(product).then((value) => {
             if (value != null)
@@ -125,7 +145,6 @@ class _NewProductScreenState extends State<NewProductScreen> {
         // Navigator.of(context).pop();
       });
     } on PlatformException catch (e) {
-      print(e);
       Navigator.of(context).pop();
     }
   }
@@ -513,6 +532,20 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                                 } else {
                                                   valid = true;
                                                 }
+                                                if (_unit ==
+                                                    listUnit[0]["value"]) {
+                                                  listPackNetWeight =
+                                                      listPackNetWeightKg;
+                                                } else if (_unit ==
+                                                    listUnit[1]["value"]) {
+                                                  listPackNetWeight =
+                                                      listPackNetWeightGam;
+                                                } else {
+                                                  listPackNetWeight = [];
+                                                }
+                                                packNetWeightItem = "";
+                                                _packNetWeight = 0;
+                                                _packDescription = "";
                                               });
                                             },
                                             items: listUnit.map((value) {
@@ -592,6 +625,118 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                       )),
                                 ],
                               ),
+                              Container(
+                                padding: EdgeInsets.all(10),
+                              ),
+                              if (listPackNetWeight.length > 0)
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        flex: 1,
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    "Đóng gói",
+                                                    style: TextStyle(
+                                                      fontFamily: "SF Semibold",
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                      padding:
+                                                          EdgeInsets.all(2)),
+                                                  Text(
+                                                    "*",
+                                                    style: TextStyle(
+                                                        color: Colors.red,
+                                                        fontSize: 18),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            DropdownButtonFormField<String>(
+                                              isExpanded: true,
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return "Đóng gói không được để trống";
+                                                }
+                                                return null;
+                                              },
+                                              value: packNetWeightItem == ''
+                                                  ? null
+                                                  : packNetWeightItem,
+                                              isDense: true,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  packNetWeightItem = value!;
+                                                  _packDescription = value;
+                                                  for (var element
+                                                      in listPackNetWeight) {
+                                                    if (element["value"] ==
+                                                        value) {
+                                                      var tmp = element["pack"]
+                                                          .toDouble();
+                                                      _packNetWeight = tmp;
+                                                    }
+                                                  }
+                                                  if (value.isEmpty) {
+                                                    valid = false;
+                                                  } else {
+                                                    valid = true;
+                                                  }
+                                                });
+                                              },
+                                              items: listPackNetWeight
+                                                  .map((value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value["value"],
+                                                  child: Text(value["value"]
+                                                      .toString()),
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ],
+                                        )),
+                                  ],
+                                ),
+                              // Column(
+                              //   children: [
+                              //     Container(
+                              //       child: Row(
+                              //         children: [
+                              //           Text(
+                              //             "Đóng gói",
+                              //             style: TextStyle(
+                              //               fontFamily: "SF Semibold",
+                              //               fontSize: 18,
+                              //             ),
+                              //           ),
+                              //         ],
+                              //       ),
+                              //     ),
+                              //     TextFormField(
+                              //       keyboardType: TextInputType.number,
+                              //       decoration: InputDecoration(
+                              //         hintStyle: TextStyle(fontSize: 16),
+                              //         hintText: 'Ví dụ: 1 Ly, 500g,...',
+                              //       ),
+                              //       // controller: controller,
+                              //       onChanged: (e) => {
+                              //         if (e != "")
+                              //           {
+                              //             setState(() => {
+                              //                   _packNetWeight = double.parse(e)
+                              //                 })
+                              //           }
+                              //       },
+                              //       // obscureText: isPassword,
+                              //     )
+                              //   ],
+                              // )
                             ],
                           ),
                         ),
@@ -608,48 +753,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                 children: [
                                   Row(
                                     children: [
-                                      Expanded(
-                                          flex: 1,
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                child: Row(
-                                                  children: [
-                                                    Text(
-                                                      "Đóng gói",
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            "SF Semibold",
-                                                        fontSize: 18,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              TextFormField(
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                decoration: InputDecoration(
-                                                  hintStyle:
-                                                      TextStyle(fontSize: 16),
-                                                  hintText:
-                                                      'Ví dụ: 1 Ly, 500g,...',
-                                                ),
-                                                // controller: controller,
-                                                onChanged: (e) => {
-                                                  if (e != "")
-                                                    {
-                                                      setState(() => {
-                                                            _packNetWeight =
-                                                                double.parse(e)
-                                                          })
-                                                    }
-                                                },
-                                                // obscureText: isPassword,
-                                              )
-                                            ],
-                                          )),
-                                      Padding(padding: EdgeInsets.all(15)),
+                                      // Padding(padding: EdgeInsets.all(15)),
                                       Expanded(
                                           flex: 1,
                                           child: Column(
@@ -674,7 +778,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                                 decoration: InputDecoration(
                                                   hintStyle:
                                                       TextStyle(fontSize: 16),
-                                                  hintText: '0',
+                                                  hintText: '1',
                                                 ),
                                                 // controller: controller,
                                                 onChanged: (e) => {
@@ -760,7 +864,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                                 decoration: InputDecoration(
                                                   hintStyle:
                                                       TextStyle(fontSize: 16),
-                                                  hintText: '0',
+                                                  hintText: '1',
                                                 ),
                                                 // controller: controller,
                                                 onChanged: (e) => {
@@ -800,19 +904,21 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                                 ),
                                               ),
                                               TextFormField(
+                                                keyboardType:
+                                                    TextInputType.multiline,
+                                                minLines: 2,
+                                                maxLines: 5,
                                                 decoration: InputDecoration(
                                                   hintStyle:
                                                       TextStyle(fontSize: 16),
-                                                  hintText:
-                                                      'Ví dụ: 330ml / Chai',
+                                                  hintText: '',
                                                 ),
                                                 // controller: controller,
                                                 onChanged: (e) => {
                                                   if (e != "")
                                                     {
-                                                      setState(() => {
-                                                            _packDescription = e
-                                                          })
+                                                      setState(() =>
+                                                          {_description = e})
                                                     }
                                                 },
                                                 // obscureText: isPassword,

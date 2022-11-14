@@ -218,7 +218,7 @@ class _MenuTabState extends State<MenuTab> {
                               Container(
                                 child: Row(children: [
                                   Text(
-                                    "Menu 1 ",
+                                    menus[tabActive].name!,
                                     style: TextStyle(
                                         fontFamily: "SF SemiBold",
                                         fontSize: 18),

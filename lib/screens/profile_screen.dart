@@ -412,33 +412,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         bottom: BorderSide(
                                             color: Colors.black12, width: 1))),
                                 margin: EdgeInsets.only(top: 20, bottom: 20)),
-                            Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.history,
-                                        size: 24,
-                                      ),
-                                      Padding(padding: EdgeInsets.all(8)),
-                                      Text(
-                                        "Lịch sử đơn hàng",
-                                        style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: "SF SemiBold",
-                                            fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                  Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    size: 16,
-                                    color: Colors.black45,
-                                  ),
-                                ]),
+                            InkWell(
+                              onTap: () {
+                                Navigator.pushNamed(context, '/order-history');
+                              },
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.history,
+                                          size: 24,
+                                        ),
+                                        Padding(padding: EdgeInsets.all(8)),
+                                        Text(
+                                          "Lịch sử đơn hàng",
+                                          style: TextStyle(
+                                              color: Colors.black87,
+                                              fontFamily: "SF SemiBold",
+                                              fontSize: 16),
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      size: 16,
+                                      color: Colors.black45,
+                                    ),
+                                  ]),
+                            ),
+                            Container(
+                                decoration: const BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: Colors.black12, width: 1))),
+                                margin:
+                                    const EdgeInsets.only(top: 20, bottom: 20)),
+                            InkWell(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, '/change-password');
+                              },
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.privacy_tip_outlined,
+                                          size: 24,
+                                        ),
+                                        Padding(padding: EdgeInsets.all(8)),
+                                        Text(
+                                          "Đổi mật khẩu",
+                                          style: TextStyle(
+                                              color: Colors.black87,
+                                              fontFamily: "SF SemiBold",
+                                              fontSize: 16),
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      size: 16,
+                                      color: Colors.black45,
+                                    ),
+                                  ]),
+                            ),
                             Container(
                                 decoration: const BoxDecoration(
                                     border: Border(
