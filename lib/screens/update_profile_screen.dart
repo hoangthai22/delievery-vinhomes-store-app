@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:store_app/apis/apiService.dart';
 import 'package:store_app/constants/Theme.dart';
@@ -192,15 +193,19 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     return Consumer<AppProvider>(builder: (context, provider, child) {
       return Scaffold(
           appBar: new AppBar(
-            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [MaterialColors.primary, Color(0xfff7892b)]),
+              ),
+            ),
             centerTitle: true,
             iconTheme: IconThemeData(
-              color: Colors.black, //change your color here
+              color: Colors.white, //change your color here
             ),
             title: Text(
               "Chỉnh sửa tài khoản",
               style: TextStyle(
-                color: MaterialColors.black,
+                color: MaterialColors.white,
                 fontFamily: "SF Bold",
               ),
             ),
@@ -228,14 +233,12 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           Stack(
                             children: [
                               Container(
-                                  margin: EdgeInsets.only(
-                                      left: 10, bottom: 10, top: 10),
+                                  margin: EdgeInsets.only(left: 10, bottom: 10, top: 10),
                                   width: 155,
                                   height: 155,
                                   // color: Colors.amber,
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Container(
@@ -274,12 +277,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                   },
                                   child: Container(
                                       padding: EdgeInsets.all(3),
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(50)),
-                                          border:
-                                              Border.all(color: Colors.white)),
+                                      decoration: BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(50)), border: Border.all(color: Colors.white)),
                                       child: Icon(
                                         Icons.clear,
                                         color: Colors.white,
@@ -293,14 +291,12 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           Stack(
                             children: [
                               Container(
-                                  margin: EdgeInsets.only(
-                                      left: 10, bottom: 10, top: 10),
+                                  margin: EdgeInsets.only(left: 10, bottom: 10, top: 10),
                                   width: 155,
                                   height: 155,
                                   // color: Colors.amber,
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Container(
@@ -320,8 +316,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                                     height: 150,
                                                     width: 150,
                                                     fit: BoxFit.cover,
-                                                    image:
-                                                        NetworkImage(isImage))
+                                                    image: NetworkImage(isImage))
                                                 : Container()),
                                       ),
                                     ],
@@ -332,38 +327,27 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           Stack(
                             children: [
                               Container(
-                                  margin: EdgeInsets.only(
-                                      left: 10, bottom: 15, top: 10),
+                                  margin: EdgeInsets.only(left: 10, bottom: 15, top: 10),
                                   width: 155,
                                   height: 155,
                                   // color: Colors.amber,
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       DottedBorder(
                                         borderType: BorderType.RRect,
-                                        color: !validImage
-                                            ? Colors.red
-                                            : MaterialColors.secondary,
+                                        color: !validImage ? Colors.red : MaterialColors.secondary,
                                         radius: Radius.circular(100),
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(100)),
+                                          borderRadius: BorderRadius.all(Radius.circular(100)),
                                           child: Container(
                                             height: 150,
                                             width: 150,
                                             alignment: Alignment.center,
                                             child: Text(
                                               "Ảnh",
-                                              style: TextStyle(
-                                                  color: !validImage
-                                                      ? Colors.red[700]
-                                                      : MaterialColors
-                                                          .secondary,
-                                                  fontFamily: "SF Medium",
-                                                  fontSize: 16),
+                                              style: TextStyle(color: !validImage ? Colors.red[700] : MaterialColors.secondary, fontFamily: "SF Medium", fontSize: 16),
                                             ),
                                             // color: Colors.amber,
                                           ),
@@ -380,8 +364,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                             children: [
                               Text(
                                 "Ảnh không được đê trống",
-                                style: TextStyle(
-                                    color: Colors.red[700], fontSize: 13),
+                                style: TextStyle(color: Colors.red[700], fontSize: 13),
                               )
                             ],
                           ),
@@ -396,12 +379,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                 // _showSelectPhotoOptions(context);
                               },
                               child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8)),
-                                    border: Border.all(
-                                        color: MaterialColors.secondary)),
+                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(8)), border: Border.all(color: MaterialColors.secondary)),
                                 width: 135,
                                 height: 40,
                                 margin: EdgeInsets.only(bottom: 15, left: 15),
@@ -418,10 +396,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                     Padding(padding: EdgeInsets.all(5)),
                                     Text(
                                       "Tải ảnh lên",
-                                      style: TextStyle(
-                                          color: MaterialColors.secondary,
-                                          fontFamily: "SF Bold",
-                                          fontSize: 17),
+                                      style: TextStyle(color: MaterialColors.secondary, fontFamily: "SF Bold", fontSize: 17),
                                     ),
                                   ],
                                 ),
@@ -433,12 +408,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                 // _showSelectPhotoOptions(context);
                               },
                               child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8)),
-                                    border: Border.all(
-                                        color: MaterialColors.secondary)),
+                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(8)), border: Border.all(color: MaterialColors.secondary)),
 
                                 width: 135,
                                 height: 40,
@@ -456,10 +426,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                     Padding(padding: EdgeInsets.all(5)),
                                     Text(
                                       "Chụp ảnh",
-                                      style: TextStyle(
-                                          color: MaterialColors.secondary,
-                                          fontFamily: "SF Bold",
-                                          fontSize: 17),
+                                      style: TextStyle(color: MaterialColors.secondary, fontFamily: "SF Bold", fontSize: 17),
                                     ),
                                     // SelectPhoto(
                                     //   onTap: () => onTap(ImageSource.gallery),
@@ -473,8 +440,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           ],
                         ),
                         Container(
-                          padding: EdgeInsets.only(
-                              left: 15, right: 15, top: 15, bottom: 25),
+                          padding: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 25),
                           decoration: BoxDecoration(color: Colors.white),
                           child: Column(
                             children: [
@@ -490,8 +456,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                   Padding(padding: EdgeInsets.all(2)),
                                   Text(
                                     "*",
-                                    style: TextStyle(
-                                        color: Colors.red, fontSize: 20),
+                                    style: TextStyle(color: Colors.red, fontSize: 20),
                                   )
                                 ],
                               ),
@@ -528,8 +493,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                   Padding(padding: EdgeInsets.all(2)),
                                   Text(
                                     "*",
-                                    style: TextStyle(
-                                        color: Colors.red, fontSize: 20),
+                                    style: TextStyle(color: Colors.red, fontSize: 20),
                                   )
                                 ],
                               ),
@@ -610,13 +574,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                                     fontSize: 18,
                                                   ),
                                                 ),
-                                                Padding(
-                                                    padding: EdgeInsets.all(2)),
+                                                Padding(padding: EdgeInsets.all(2)),
                                                 Text(
                                                   "*",
-                                                  style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize: 18),
+                                                  style: TextStyle(color: Colors.red, fontSize: 18),
                                                 )
                                               ],
                                             ),
@@ -624,15 +585,12 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                           DropdownButtonFormField<String>(
                                             isExpanded: true,
                                             validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
+                                              if (value == null || value.isEmpty) {
                                                 return "Địa chỉ không được để trống";
                                               }
                                               return null;
                                             },
-                                            value: _buildingId == ''
-                                                ? null
-                                                : _buildingId,
+                                            value: _buildingId == '' ? null : _buildingId,
                                             isDense: true,
                                             onChanged: (value) {
                                               setState(() {
@@ -647,8 +605,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                             items: listBuilding.map((value) {
                                               return DropdownMenuItem<String>(
                                                 value: value.id,
-                                                child:
-                                                    Text(value.name.toString()),
+                                                child: Text(value.name.toString()),
                                               );
                                             }).toList(),
                                           ),
@@ -669,13 +626,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                                     fontSize: 18,
                                                   ),
                                                 ),
-                                                Padding(
-                                                    padding: EdgeInsets.all(2)),
+                                                Padding(padding: EdgeInsets.all(2)),
                                                 Text(
                                                   "*",
-                                                  style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize: 20),
+                                                  style: TextStyle(color: Colors.red, fontSize: 20),
                                                 )
                                               ],
                                             ),
@@ -683,15 +637,13 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                           TextFormField(
                                             controller: _phone,
                                             validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
+                                              if (value == null || value.isEmpty) {
                                                 return "Số điện thoại không được để trống";
                                               }
                                               return null;
                                             },
                                             decoration: InputDecoration(
-                                              hintStyle:
-                                                  TextStyle(fontSize: 16),
+                                              hintStyle: TextStyle(fontSize: 16),
                                             ),
                                             onChanged: (e) => {},
                                             // obscureText: isPassword,
@@ -717,13 +669,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                                     fontSize: 18,
                                                   ),
                                                 ),
-                                                Padding(
-                                                    padding: EdgeInsets.all(2)),
+                                                Padding(padding: EdgeInsets.all(2)),
                                                 Text(
                                                   "*",
-                                                  style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize: 20),
+                                                  style: TextStyle(color: Colors.red, fontSize: 20),
                                                 )
                                               ],
                                             ),
@@ -731,15 +680,13 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                           TextFormField(
                                             controller: _openTime,
                                             validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
+                                              if (value == null || value.isEmpty) {
                                                 return "Giờ mở cửa không được để trống";
                                               }
                                               return null;
                                             },
                                             decoration: InputDecoration(
-                                              hintStyle:
-                                                  TextStyle(fontSize: 16),
+                                              hintStyle: TextStyle(fontSize: 16),
                                             ),
                                             onChanged: (e) => {},
                                             // obscureText: isPassword,
@@ -761,13 +708,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                                     fontSize: 18,
                                                   ),
                                                 ),
-                                                Padding(
-                                                    padding: EdgeInsets.all(2)),
+                                                Padding(padding: EdgeInsets.all(2)),
                                                 Text(
                                                   "*",
-                                                  style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize: 20),
+                                                  style: TextStyle(color: Colors.red, fontSize: 20),
                                                 )
                                               ],
                                             ),
@@ -775,15 +719,13 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                           TextFormField(
                                             controller: _closeTime,
                                             validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
+                                              if (value == null || value.isEmpty) {
                                                 return "Giờ đóng cửa không được để trống";
                                               }
                                               return null;
                                             },
                                             decoration: InputDecoration(
-                                              hintStyle:
-                                                  TextStyle(fontSize: 16),
+                                              hintStyle: TextStyle(fontSize: 16),
                                             ),
                                             onChanged: (e) => {},
                                             // obscureText: isPassword,
@@ -832,39 +774,39 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
               Positioned(
                   bottom: 0,
                   child: Container(
-                      decoration: BoxDecoration(color: Colors.white),
-                      padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 10, bottom: 10),
+                      decoration: const BoxDecoration(color: Colors.white),
+                      padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
                       width: MediaQuery.of(context).size.width,
-                      child: Container(
+                      child: SizedBox(
                         height: 45,
-                        child: ElevatedButton(
-                          child: Text(
-                            "Cập nhật",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "SF Bold",
-                                fontSize: 18),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            primary: MaterialColors.primary,
-                            textStyle: TextStyle(color: Colors.black),
-                            shadowColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                        child: InkWell(
+                          onTap: () {
+                            if (_image == null && isImage == "") {
+                              setState(() {
+                                validImage = false;
+                              });
+                            } else if (_formKey.currentState!.validate() && (_image != null || isImage != "")) {
+                              hanldeUpdate();
+                            }
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                                boxShadow: <BoxShadow>[BoxShadow(color: Colors.grey.shade200, offset: const Offset(2, 4), blurRadius: 5, spreadRadius: 2)],
+                                gradient: const LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [MaterialColors.primary, Color(0xfff7892b)])),
+                            child: const Text(
+                              'Cập nhật',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                height: 1,
+                                fontFamily: "SF SemiBold",
+                              ),
                             ),
                           ),
-                          onPressed: () => {
-                            if (_image == null && isImage == "")
-                              {
-                                setState(() {
-                                  validImage = false;
-                                })
-                              }
-                            else if (_formKey.currentState!.validate() &&
-                                (_image != null || isImage != ""))
-                              {hanldeUpdate()},
-                          },
                         ),
                       ))),
               if (isLoadingSubmit)
@@ -875,7 +817,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     width: MediaQuery.of(context).size.width,
                     child: SpinKitDualRing(
                       color: MaterialColors.primary,
-                      size: 50.0,
+                      size: 45.0,
                     ),
                   ),
                 ),

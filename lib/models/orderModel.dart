@@ -9,11 +9,14 @@ class OrderModel {
   double? total;
   double? shipCost;
   String? note;
-  String? paymentName;
+  int? paymentName;
   int? status;
   String? countProduct;
   String? modeId;
+  String? fromHour;
+  String? toHour;
   String? time;
+  List? listShipper;
 
   OrderModel({
     required this.id,
@@ -24,9 +27,12 @@ class OrderModel {
     required this.total,
     required this.note,
     required this.status,
+    required this.fromHour,
+    required this.toHour,
     required this.paymentName,
     required this.shipCost,
     required this.modeId,
+    required this.listShipper,
     required this.countProduct,
     required this.time,
   });
@@ -38,6 +44,8 @@ class OrderModel {
       buildingName: json['buildingName'],
       customerName: json['customerName'],
       phone: json['phone'],
+      fromHour: json['fromHour'],
+      toHour: json['toHour'],
       countProduct: json['countProduct'],
       note: json['note'],
       total: json['total'] == null ? 0.0 : json['total'].toDouble(),
@@ -46,6 +54,7 @@ class OrderModel {
       paymentName: json['paymentName'],
       shipCost: json['shipCost'] == null ? 0.0 : json['shipCost'].toDouble(),
       time: json['time'],
+      listShipper: json['listShipper'],
     );
   }
 }

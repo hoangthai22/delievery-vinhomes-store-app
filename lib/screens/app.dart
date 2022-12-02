@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -38,29 +40,24 @@ class AppState extends State<App> {
   PushNotificationModel? _notificationInfo;
   FirebaseFirestore db = FirebaseFirestore.instance;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-
+  late StreamSubscription fcmListener;
   void registerNotification() async {
     await Firebase.initializeApp();
     messaging = FirebaseMessaging.instance;
 
-    NotificationSettings settings = await messaging.requestPermission(
-        alert: true, badge: true, provisional: false, sound: true);
+    NotificationSettings settings = await messaging.requestPermission(alert: true, badge: true, provisional: false, sound: true);
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      fcmListener = FirebaseMessaging.onMessage.asBroadcastStream().listen((RemoteMessage message) {
         print("on app");
-        PushNotificationModel notification = PushNotificationModel(
-            title: message.notification!.title,
-            body: message.notification!.body,
-            dataTitle: message.data['title'],
-            dataBody: message.data['body']);
+        PushNotificationModel notification =
+            PushNotificationModel(title: message.notification!.title, body: message.notification!.body, dataTitle: message.notification!.title, dataBody: message.notification!.body);
 
-        setState(() {
-          _notificationInfo = notification;
-        });
+        // setState(() {
+        //   _notificationInfo = notification;
+        // });
 
         if (notification != null) {
-          _showNotification(
-              _notificationInfo!.title!, _notificationInfo!.body!);
+          _showNotification(message.notification!.title!, message.notification!.body!);
         }
       });
     } else {
@@ -69,32 +66,21 @@ class AppState extends State<App> {
   }
 
   Future<void> _showNotification(String title, String content) async {
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('your channel id', 'your channel name',
-            channelDescription: 'your channel description',
-            importance: Importance.max,
-            priority: Priority.high,
-            icon: '@drawable/logoicon',
-            tag: "Cộng Đồng Chung Cư",
-            ticker: 'ticker');
+    final AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails('your channel id', 'your channel name',
+        channelDescription: 'your channel description', importance: Importance.max, priority: Priority.high, icon: '@drawable/logoicon', tag: "Cộng Đồng Chung Cư", ticker: 'ticker');
 
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin
-        .show(0, title, content, platformChannelSpecifics, payload: 'item x');
+    final NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(0, title, content, platformChannelSpecifics, payload: 'item x');
   }
 
   @override
   void initState() {
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = DarwinInitializationSettings();
-    var initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    var initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: (value) {
-      Navigator.pushNamed(context, "/notification");
+    flutterLocalNotificationsPlugin.initialize(initializationSettings, onDidReceiveNotificationResponse: (value) {
+      Navigator.pushNamed(context, "/home");
     });
 
     registerNotification();
@@ -102,9 +88,16 @@ class AppState extends State<App> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    print('EVERYTHING disposed');
+    fcmListener.cancel();
+    // other disposes()
+  }
+
   checkForInitialMessage() async {
-    RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
+    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
         Navigator.pushNamed(context, "/notification");
@@ -117,8 +110,7 @@ class AppState extends State<App> {
     // return Consumer<AppProvider>(builder: (context, provider, child) {
     return WillPopScope(onWillPop: () async {
       // if (provider.getIsLogin == true) {
-      final isFirstRouteInCurrentTab =
-          !await _navigatorKeys[_currentTab]!.currentState!.maybePop();
+      final isFirstRouteInCurrentTab = !await _navigatorKeys[_currentTab]!.currentState!.maybePop();
       if (isFirstRouteInCurrentTab) {
         // if not on the 'main' tab
         if (_currentTab != TabItem.home) {

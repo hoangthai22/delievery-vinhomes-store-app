@@ -3,12 +3,14 @@ import 'dart:convert' as convert;
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:store_app/models/OrderReportPriceModel.dart';
 import 'package:store_app/models/buildingModel.dart';
 import 'package:store_app/models/categoryModel.dart';
 import 'package:store_app/models/menuDetailModel.dart';
 import 'package:store_app/models/menuModel.dart';
 import 'package:store_app/models/orderDetailModel.dart';
 import 'package:store_app/models/orderModel.dart';
+import 'package:store_app/models/orderReportModel.dart';
 import 'package:store_app/models/productMenuModel.dart';
 import 'package:store_app/models/productModel.dart';
 import 'package:store_app/models/storeModel.dart';
@@ -26,13 +28,11 @@ class ApiServices {
   static Future<dynamic> getListProduct(String storeId, page, size) async {
     try {
       var response = await http.get(
-        Uri.parse(
-            '${baseURL}/${PRODUCT}/${storeId}/${PRODUCT}?pageIndex=${page}&pageSize=${size}'),
+        Uri.parse('${baseURL}/${PRODUCT}/${storeId}/${PRODUCT}?pageIndex=${page}&pageSize=${size}'),
       );
       if (response.statusCode == 200) {
         List<dynamic> body = convert.jsonDecode(response.body);
-        List<ProductModel> products =
-            body.map((dynamic item) => ProductModel.fromJson(item)).toList();
+        List<ProductModel> products = body.map((dynamic item) => ProductModel.fromJson(item)).toList();
         return products;
       } else if (response.statusCode == 404) {
         return [];
@@ -46,13 +46,11 @@ class ApiServices {
   static Future<dynamic> getListOrder(String storeId, page, size) async {
     try {
       var response = await http.get(
-        Uri.parse(
-            '${baseURL}/${ORDER}/${STORE}/byStoreId?storeId=${storeId}&pageIndex=${page}&pageSize=${size}'),
+        Uri.parse('${baseURL}/${ORDER}/${STORE}/byStoreId?storeId=${storeId}&pageIndex=${page}&pageSize=${size}'),
       );
       if (response.statusCode == 200) {
         List<dynamic> body = convert.jsonDecode(response.body);
-        List<OrderModel> orders =
-            body.map((dynamic item) => OrderModel.fromJson(item)).toList();
+        List<OrderModel> orders = body.map((dynamic item) => OrderModel.fromJson(item)).toList();
         return orders;
       } else if (response.statusCode == 404) {
         return [];
@@ -66,13 +64,11 @@ class ApiServices {
   static Future<dynamic> getListOrder0123(String storeId, page, size) async {
     try {
       var response = await http.get(
-        Uri.parse(
-            '${baseURL}/store-management/${STORE}/byStoreId/orders-preparing?storeId=${storeId}&pageIndex=${page}&pageSize=${size}'),
+        Uri.parse('${baseURL}/store-management/${STORE}/byStoreId/orders-preparing?storeId=${storeId}&pageIndex=${page}&pageSize=${size}'),
       );
       if (response.statusCode == 200) {
         List<dynamic> body = convert.jsonDecode(response.body);
-        List<OrderModel> orders =
-            body.map((dynamic item) => OrderModel.fromJson(item)).toList();
+        List<OrderModel> orders = body.map((dynamic item) => OrderModel.fromJson(item)).toList();
         return orders;
       } else if (response.statusCode == 404) {
         print("404");
@@ -87,13 +83,11 @@ class ApiServices {
   static Future<dynamic> getListOrder478(String storeId, page, size) async {
     try {
       var response = await http.get(
-        Uri.parse(
-            '${baseURL}/store-management/${STORE}/byStoreId/orders-delivering?storeId=${storeId}&pageIndex=${page}&pageSize=${size}'),
+        Uri.parse('${baseURL}/store-management/${STORE}/byStoreId/orders-delivering?storeId=${storeId}&pageIndex=${page}&pageSize=${size}'),
       );
       if (response.statusCode == 200) {
         List<dynamic> body = convert.jsonDecode(response.body);
-        List<OrderModel> orders =
-            body.map((dynamic item) => OrderModel.fromJson(item)).toList();
+        List<OrderModel> orders = body.map((dynamic item) => OrderModel.fromJson(item)).toList();
         return orders;
       } else if (response.statusCode == 404) {
         print("404");
@@ -108,13 +102,11 @@ class ApiServices {
   static Future<dynamic> getListOrderDone(String storeId, page, size) async {
     try {
       var response = await http.get(
-        Uri.parse(
-            '${baseURL}/store-management/${STORE}/byStoreId/orders-completed?storeId=${storeId}&pageIndex=${page}&pageSize=${size}'),
+        Uri.parse('${baseURL}/store-management/${STORE}/byStoreId/orders-completed?storeId=${storeId}&pageIndex=${page}&pageSize=${size}'),
       );
       if (response.statusCode == 200) {
         List<dynamic> body = convert.jsonDecode(response.body);
-        List<OrderModel> orders =
-            body.map((dynamic item) => OrderModel.fromJson(item)).toList();
+        List<OrderModel> orders = body.map((dynamic item) => OrderModel.fromJson(item)).toList();
         return orders;
       } else if (response.statusCode == 404) {
         print("404");
@@ -126,18 +118,15 @@ class ApiServices {
   }
 
   //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/store-management/stores/byStoreId/byModeId/order?storeId=store2%40gmail.com&modeId=3&pageIndex=1&pageSize=20
-  static Future<dynamic> getListOrderByMode(
-      String storeId, mode, page, size) async {
+  static Future<dynamic> getListOrderByMode(String storeId, mode, page, size) async {
     try {
       var response = await http.get(
-        Uri.parse(
-            '${baseURL}/store-management/${STORE}/byStoreId/byModeId/order?storeId=${storeId}&modeId=${mode}&pageIndex=${page}&pageSize=${size}'),
+        Uri.parse('${baseURL}/store-management/${STORE}/byStoreId/byModeId/order?storeId=${storeId}&modeId=${mode}&pageIndex=${page}&pageSize=${size}'),
       );
       if (response.statusCode == 200) {
         print("200");
         List<dynamic> body = convert.jsonDecode(response.body);
-        List<OrderModel> orders =
-            body.map((dynamic item) => OrderModel.fromJson(item)).toList();
+        List<OrderModel> orders = body.map((dynamic item) => OrderModel.fromJson(item)).toList();
         return orders;
       } else if (response.statusCode == 404) {
         print("404");
@@ -150,17 +139,14 @@ class ApiServices {
   }
 
   //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/orders/stores/byStoreId/status/ByStatusId?statusId=3&storeId=s4&pageIndex=1&pageSize=20
-  static Future<dynamic> getListOrderByStatus(
-      String storeId, String statusId, page, size) async {
+  static Future<dynamic> getListOrderByStatus(String storeId, String statusId, page, size) async {
     try {
       var response = await http.get(
-        Uri.parse(
-            '${baseURL}/${ORDER}/${STORE}/byStoreId/status/ByStatusId?statusId=${statusId}&storeId=${storeId}&pageIndex=${page}&pageSize=${size}'),
+        Uri.parse('${baseURL}/${ORDER}/${STORE}/byStoreId/status/ByStatusId?statusId=${statusId}&storeId=${storeId}&pageIndex=${page}&pageSize=${size}'),
       );
       if (response.statusCode == 200) {
         List<dynamic> body = convert.jsonDecode(response.body);
-        List<OrderModel> orders =
-            body.map((dynamic item) => OrderModel.fromJson(item)).toList();
+        List<OrderModel> orders = body.map((dynamic item) => OrderModel.fromJson(item)).toList();
         return orders;
       } else if (response.statusCode == 404) {
         return [];
@@ -178,8 +164,7 @@ class ApiServices {
     var body;
     print(orderId);
     try {
-      var response =
-          await http.get(Uri.parse('${baseURL}/${ORDER}/${orderId}'));
+      var response = await http.get(Uri.parse('${baseURL}/${ORDER}/${orderId}'));
       body = convert.jsonDecode(response.body);
       orderDetailModel.complete(OrderDetailModel.fromJson(body['data']));
     } catch (_) {
@@ -188,17 +173,57 @@ class ApiServices {
     return orderDetailModel.future;
   }
 
+  //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/store-management/stores/orderReport?storeId=store29%40gmail.com
+  static Future<dynamic> getOrderReports(
+    String storeId,
+    String dayFilter,
+  ) async {
+    var orderReport = Completer<OrderReportModel>();
+    var body;
+    var url = "";
+    if (dayFilter != "") {
+      url = "&DateFilter=${dayFilter}";
+    }
+    try {
+      var response = await http.get(Uri.parse('${baseURL}/store-management/${STORE}/orderReport?storeId=${storeId}${url}'));
+      body = convert.jsonDecode(response.body);
+      orderReport.complete(OrderReportModel.fromJson(body['data']));
+    } catch (_) {
+      orderReport.complete(OrderReportModel.fromJson(body));
+    }
+    return orderReport.future;
+  }
+
+  //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/store-management/stores/orderReport-Revenue?storeId=store13%40gmail.com
+  static Future<dynamic> getOrderReportsPrice(
+    String storeId,
+    String dayFilter,
+  ) async {
+    var orderReport = Completer<OrderReportPriceModel>();
+    var body;
+    var url = "";
+    if (dayFilter != "") {
+      url = "&DateFilter=${dayFilter}";
+    }
+    try {
+      var response = await http.get(Uri.parse('${baseURL}/store-management/${STORE}/orderReport-Revenue?storeId=${storeId}${url}'));
+      body = convert.jsonDecode(response.body);
+      orderReport.complete(OrderReportPriceModel.fromJson(body['data']));
+    } catch (_) {
+      orderReport.complete(OrderReportPriceModel.fromJson(body));
+    }
+    return orderReport.future;
+  }
+
   //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/category-management/categories?pageIndex=1&pageSize=20
   static Future<dynamic> getListCategory(page, size) async {
     try {
       var response = await http.get(
-        Uri.parse(
-            '${baseURL}/${CATEGORY}/categories?pageIndex=${page}&pageSize=${size}'),
+        Uri.parse('${baseURL}/${CATEGORY}/categories?pageIndex=${page}&pageSize=${size}'),
       );
       if (response.statusCode == 200) {
         List<dynamic> body = convert.jsonDecode(response.body);
-        List<CategoryModel> categories =
-            body.map((dynamic item) => CategoryModel.fromJson(item)).toList();
+        List<CategoryModel> categories = body.map((dynamic item) => CategoryModel.fromJson(item)).toList();
         return categories;
       } else if (response.statusCode == 404) {
         return [];
@@ -248,8 +273,7 @@ class ApiServices {
     }
   }
 
-  static Future<dynamic> putUpdateProduct(
-      ProductModel product, String id) async {
+  static Future<dynamic> putUpdateProduct(ProductModel product, String id) async {
     //12c9cd48-8cb7-4145-8fd9-323e20b329dd
     try {
       Map<String, String> headers = {"Content-type": "application/json"};
@@ -320,8 +344,7 @@ class ApiServices {
     var store = Completer<StoreModel>();
     var body;
     try {
-      var response = await http.get(Uri.parse(
-          '${baseURL}/${"store-management"}/${STORE}/storeId?storeId=${id}'));
+      var response = await http.get(Uri.parse('${baseURL}/${"store-management"}/${STORE}/storeId?storeId=${id}'));
       body = convert.jsonDecode(response.body);
       store.complete(StoreModel.fromJson(body['data']));
     } catch (_) {
@@ -335,9 +358,7 @@ class ApiServices {
     //12c9cd48-8cb7-4145-8fd9-323e20b329dd
     try {
       Map<String, String> headers = {"Content-type": "application/json"};
-      var response = await http.put(
-          Uri.parse(
-              '${baseURL}/${"store-management"}/${STORE}/${id}?imgUpdate=true'),
+      var response = await http.put(Uri.parse('${baseURL}/${"store-management"}/${STORE}/${id}?imgUpdate=true'),
           headers: headers,
           body: convert.jsonEncode({
             "id": store.id,
@@ -409,8 +430,7 @@ class ApiServices {
       );
       if (response.statusCode == 200) {
         List<dynamic> body = convert.jsonDecode(response.body);
-        List<MenuModel> menus =
-            body.map((dynamic item) => MenuModel.fromJson(item)).toList();
+        List<MenuModel> menus = body.map((dynamic item) => MenuModel.fromJson(item)).toList();
         return menus;
       } else if (response.statusCode == 404) {
         return [];
@@ -421,17 +441,14 @@ class ApiServices {
   }
 
   //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/menus/1/filter?storeId=s4&page=1&pageSize=20
-  static Future<dynamic> getListProductByMenu(
-      menuId, storeId, page, size) async {
+  static Future<dynamic> getListProductByMenu(menuId, storeId, page, size) async {
     try {
       var response = await http.get(
-        Uri.parse(
-            '${baseURL}/${MENU}/${menuId}/filter?storeId=${storeId}&page=${page}&pageSize=${size}'),
+        Uri.parse('${baseURL}/${MENU}/${menuId}/filter?storeId=${storeId}&page=${page}&pageSize=${size}'),
       );
       if (response.statusCode == 200) {
         List<dynamic> body = convert.jsonDecode(response.body);
-        List<MenuDetailModel> menus =
-            body.map((dynamic item) => MenuDetailModel.fromJson(item)).toList();
+        List<MenuDetailModel> menus = body.map((dynamic item) => MenuDetailModel.fromJson(item)).toList();
         return menus;
       } else if (response.statusCode == 404) {
         return [];
@@ -442,18 +459,14 @@ class ApiServices {
   }
 
   //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/menus/1/not-products/filter?storeId=s4&page=1&pageSize=20
-  static Future<dynamic> getListProductOutOfMenu(
-      menuId, storeId, page, size) async {
+  static Future<dynamic> getListProductOutOfMenu(menuId, storeId, page, size) async {
     try {
       var response = await http.get(
-        Uri.parse(
-            '${baseURL}/${MENU}/${menuId}/not-products/filter?storeId=${storeId}&page=${page}&pageSize=${size}'),
+        Uri.parse('${baseURL}/${MENU}/${menuId}/not-products/filter?storeId=${storeId}&page=${page}&pageSize=${size}'),
       );
       if (response.statusCode == 200) {
         List<dynamic> body = convert.jsonDecode(response.body);
-        List<ProductMenuModel> menus = body
-            .map((dynamic item) => ProductMenuModel.fromJson(item))
-            .toList();
+        List<ProductMenuModel> menus = body.map((dynamic item) => ProductMenuModel.fromJson(item)).toList();
         return menus;
       } else if (response.statusCode == 404) {
         return [];
@@ -471,8 +484,7 @@ class ApiServices {
       );
       if (response.statusCode == 200) {
         List<dynamic> body = convert.jsonDecode(response.body);
-        List<BuildingModel> buildings =
-            body.map((dynamic item) => BuildingModel.fromJson(item)).toList();
+        List<BuildingModel> buildings = body.map((dynamic item) => BuildingModel.fromJson(item)).toList();
         return buildings;
       } else if (response.statusCode == 404) {
         return [];
@@ -483,13 +495,11 @@ class ApiServices {
   }
 
 //https://deliveryvhgp-webapi.azurewebsites.net/api/v1/store-management/stores/status/1
-  static Future<dynamic> putUpdateStatusStore(
-      String storeId, bool status) async {
+  static Future<dynamic> putUpdateStatusStore(String storeId, bool status) async {
     //12c9cd48-8cb7-4145-8fd9-323e20b329dd
     try {
       Map<String, String> headers = {"Content-type": "application/json"};
-      var response = await http.put(
-          Uri.parse('${baseURL}/store-management/${STORE}/status/${storeId}'),
+      var response = await http.put(Uri.parse('${baseURL}/store-management/${STORE}/status/${storeId}'),
           headers: headers,
           body: convert.jsonEncode({
             "id": storeId,
@@ -522,6 +532,26 @@ class ApiServices {
       if (response.statusCode == 200) {
         Map valueMap = convert.jsonDecode(response.body);
         return valueMap["message"];
+      } else if (response.statusCode == 404 || response.statusCode == 409) {
+        return null;
+      }
+    } catch (e) {
+      print('Error with status code: ${e}');
+    }
+  }
+
+//https://deliveryvhgp-webapi.azurewebsites.net/api/v1/menus/3/products?productId=3
+  static Future<dynamic> deleteProductInMenu(String id, String menuId) async {
+    //12c9cd48-8cb7-4145-8fd9-323e20b329dd
+    try {
+      Map<String, String> headers = {"Content-type": "application/json"};
+      var response = await http.delete(
+        Uri.parse(
+          '${baseURL}/${MENU}/${menuId}/${PRODUCT}?productId=${id}',
+        ),
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
       } else if (response.statusCode == 404 || response.statusCode == 409) {
         return null;
       }

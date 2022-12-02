@@ -6,15 +6,13 @@ import 'package:store_app/constants/Theme.dart';
 import 'package:store_app/models/orderModel.dart';
 import 'package:store_app/screens/order_detail_screen.dart';
 import 'package:store_app/widgets/order/order_list.dart';
-import 'package:store_app/widgets/order/order_list_done.dart';
 import 'package:store_app/widgets/order/order_list_mode3.dart';
 import 'package:store_app/widgets/order/order_list_shipping.dart';
 
 class OrderTab extends StatefulWidget {
   String storeId;
   int tab;
-  OrderTab({Key? key, required this.storeId, required this.tab})
-      : super(key: key);
+  OrderTab({Key? key, required this.storeId, required this.tab}) : super(key: key);
 
   @override
   _OrderTabState createState() => _OrderTabState();

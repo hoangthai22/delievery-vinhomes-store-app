@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:store_app/apis/apiService.dart';
 import 'package:store_app/constants/Theme.dart';
 import 'package:store_app/constants/Variable.dart';
@@ -49,6 +50,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   OrderDetailModel orderDetailModel = OrderDetailModel();
   List<ProductOrder> listProductOrder = [];
   String status = "";
+  String shipperName = "---";
+  String shipperPhone = "";
   int statusId = 0;
   Color? color;
   bool isLoading = true;
@@ -64,11 +67,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             {
               setState(() {
                 orderDetailModel = value;
-                listProductOrder =
-                    orderDetailModel.listProInMenu!.map((dynamic item) {
+                listProductOrder = orderDetailModel.listProInMenu!.map((dynamic item) {
                   return ProductOrder.fromJson(item);
                 }).toList();
-
+                if (orderDetailModel.listShipper!.isNotEmpty) {
+                  shipperName = orderDetailModel.listShipper![0]["shipperName"].toString();
+                }
                 orderDetailModel.listStatusOrder!.map((dynamic item) {
                   statusId = item["status"];
                   // status = Status.getStatusName(item["status"]);
@@ -86,12 +90,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     await Firebase.initializeApp();
     messaging = FirebaseMessaging.instance;
 
-    NotificationSettings settings = await messaging.requestPermission(
-        alert: true, badge: true, provisional: false, sound: true);
+    NotificationSettings settings = await messaging.requestPermission(alert: true, badge: true, provisional: false, sound: true);
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      fcmListener = FirebaseMessaging.onMessage
-          .asBroadcastStream()
-          .listen((RemoteMessage message) {
+      fcmListener = FirebaseMessaging.onMessage.asBroadcastStream().listen((RemoteMessage message) {
         getOrderDetail();
       });
     } else {
@@ -120,102 +121,81 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     return showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(8.0))),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(8.0))),
         builder: (BuildContext bc) {
           return Container(
             height: MediaQuery.of(context).size.height * 0.27,
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 15),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(top: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.arrow_back_ios,
-                          size: 20,
-                          color: Colors.black87,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text("Tại sao bạn hủy đơn?",
-                            style: const TextStyle(
-                                fontFamily: "SF Bold",
-                                fontSize: 18,
-                                color: Colors.black87)),
-                      ],
+            child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(
+                padding: EdgeInsets.only(top: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.arrow_back_ios,
+                      size: 20,
+                      color: Colors.black87,
                     ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 15, top: 10),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, "/cancel-order")
-                          .then((value) => {getOrderDetail()});
-                    },
-                    child: Container(
-                      padding: EdgeInsets.only(top: 5, bottom: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text("Phần lớn các món đều hết",
-                              style: const TextStyle(
-                                  fontFamily: "SF Regular",
-                                  fontSize: 16,
-                                  color: Colors.black87)),
-                          Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            size: 12,
-                            color: Colors.black45,
-                          )
-                        ],
-                      ),
+                    SizedBox(
+                      width: 10,
                     ),
+                    Text("Tại sao bạn hủy đơn?", style: const TextStyle(fontFamily: "SF Bold", fontSize: 18, color: Colors.black87)),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 15, top: 10),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, "/cancel-order").then((value) => {getOrderDetail()});
+                },
+                child: Container(
+                  padding: EdgeInsets.only(top: 5, bottom: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("Phần lớn các món đều hết", style: const TextStyle(fontFamily: "SF Regular", fontSize: 16, color: Colors.black87)),
+                      Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        size: 12,
+                        color: Colors.black45,
+                      )
+                    ],
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 15, top: 15),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                color: Color.fromRGBO(230, 230, 230, 1)))),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 15, top: 15),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Color.fromRGBO(230, 230, 230, 1)))),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, "/cancel-order").then((value) => {getOrderDetail()});
+                },
+                child: Container(
+                  padding: EdgeInsets.only(top: 5, bottom: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("Chúng tôi sắp đóng cửa", style: const TextStyle(fontFamily: "SF Regular", fontSize: 16, color: Colors.black87)),
+                      Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        size: 12,
+                        color: Colors.black45,
+                      )
+                    ],
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, "/cancel-order")
-                          .then((value) => {getOrderDetail()});
-                    },
-                    child: Container(
-                      padding: EdgeInsets.only(top: 5, bottom: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text("Chúng tôi sắp đóng cửa",
-                              style: const TextStyle(
-                                  fontFamily: "SF Regular",
-                                  fontSize: 16,
-                                  color: Colors.black87)),
-                          Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            size: 12,
-                            color: Colors.black45,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ]),
+                ),
+              ),
+            ]),
           );
         });
   }
@@ -239,14 +219,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             // backgroundColor: Color.fromARGB(255, 255, 255, 255),
             flexibleSpace: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      Status.getStatusColor(widget.order.status)!
-                          .withOpacity(0.9),
-                      Status.getStatusColor(widget.order.status)!,
-                    ]),
+                gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: Status.getStatusColor(widget.order.status)!),
               ),
             ),
             toolbarHeight: 65,
@@ -261,18 +234,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               children: [
                 Text(
                   "Đơn hàng #${widget.order.id.toString()}",
-                  style: const TextStyle(
-                      fontFamily: "SF Bold", fontSize: 16, color: Colors.white),
+                  style: const TextStyle(fontFamily: "SF Bold", fontSize: 16, color: Colors.white),
                 ),
                 SizedBox(
                   height: 7,
                 ),
                 Text(
                   Status.getStatusName(widget.order.status),
-                  style: const TextStyle(
-                      fontFamily: "SF Medium",
-                      fontSize: 14,
-                      color: Colors.white),
+                  style: const TextStyle(fontFamily: "SF Medium", fontSize: 14, color: Colors.white),
                 ),
               ],
             )),
@@ -305,43 +274,46 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               ),
                             ),
                             SizedBox(width: 15),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(getModeName(orderDetailModel.modeId),
-                                        style: const TextStyle(
-                                            fontFamily: "SF SemiBold",
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(getModeName(orderDetailModel.modeId),
+                                          style: const TextStyle(
+                                            fontFamily: "SF Medium",
                                             fontSize: 16,
-                                            color: Colors.black87)),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Tooltip(
-                                      message: getTooltipMessage(orderDetailModel.modeId),
-                                      showDuration: const Duration(seconds: 5),
-                                      triggerMode: TooltipTriggerMode.tap,
-                                      child: Icon(
-                                        Icons.info_outline,
-                                        color: Colors.black38,
-                                        size: 14,
+                                            color: Color.fromRGBO(150, 150, 150, 1),
+                                          )),
+                                      SizedBox(
+                                        width: 5,
                                       ),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(getModeMessage(orderDetailModel.modeId),
-                                    style: const TextStyle(
-                                        fontFamily: "SF Regular",
-                                        fontSize: 14,
-                                        color: Colors.black87)),
-                              ],
+                                      Tooltip(
+                                        message: getTooltipMessage(orderDetailModel.modeId),
+                                        showDuration: const Duration(seconds: 5),
+                                        triggerMode: TooltipTriggerMode.tap,
+                                        child: Icon(
+                                          Icons.info_outline,
+                                          color: Colors.black38,
+                                          size: 14,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 7,
+                                  ),
+                                  Text(
+                                      getModeMessage(orderDetailModel.listStatusOrder ?? [], widget.order.status!, orderDetailModel.modeId!, orderDetailModel.dayfilter!, orderDetailModel.time!,
+                                          orderDetailModel.fromHour!, orderDetailModel.toHour!),
+                                      style: const TextStyle(fontFamily: "SF Bold", fontSize: 15, color: Colors.black87)),
+                                ],
+                              ),
+                              flex: 1,
                             )
                           ],
                         )),
@@ -351,8 +323,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       //         fontFamily: "SF SemiBold",
                       //         fontSize: 17,
                       //         color: Colors.black54)),
-                      padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 5, bottom: 10),
+                      padding: EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 10),
                     ),
                     Container(
                         color: Colors.white,
@@ -374,20 +345,11 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(widget.order.customerName!,
-                                        style: const TextStyle(
-                                            fontFamily: "SF SemiBold",
-                                            fontSize: 16,
-                                            color: Colors.black87)),
+                                    Text(widget.order.customerName!, style: const TextStyle(fontFamily: "SF SemiBold", fontSize: 16, color: Colors.black87)),
                                     SizedBox(
                                       height: 3,
                                     ),
-                                    Text("Người nhận",
-                                        style: const TextStyle(
-                                            fontFamily: "SF Regular",
-                                            fontSize: 14,
-                                            color: Color.fromRGBO(
-                                                180, 180, 180, 1)))
+                                    Text("Người nhận", style: const TextStyle(fontFamily: "SF Regular", fontSize: 14, color: Color.fromRGBO(180, 180, 180, 1)))
                                   ],
                                 )
                               ],
@@ -409,18 +371,11 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           ],
                         )),
                     Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border:
-                                Border(top: BorderSide(color: Colors.black12))),
+                        decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Colors.black12))),
                         padding: EdgeInsets.all(15),
                         child: Row(
                           children: [
-                            Text("Tin nhắn từ khách hàng",
-                                style: const TextStyle(
-                                    fontFamily: "SF SemiBold",
-                                    fontSize: 16,
-                                    color: Color.fromRGBO(150, 150, 150, 1))),
+                            Text("Tin nhắn từ khách hàng", style: const TextStyle(fontFamily: "SF SemiBold", fontSize: 16, color: Color.fromRGBO(150, 150, 150, 1))),
                           ],
                         )),
                     Container(
@@ -443,14 +398,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                     width: 20,
                                   ),
                                   Expanded(
-                                    child: Text(
-                                        orderDetailModel.note != ""
-                                            ? orderDetailModel.note.toString()
-                                            : "Không có",
-                                        style: const TextStyle(
-                                            fontFamily: "SF SemiBold",
-                                            fontSize: 15,
-                                            color: Colors.black)),
+                                    child: Text(orderDetailModel.note != "" ? orderDetailModel.note.toString() : "Không có",
+                                        style: const TextStyle(fontFamily: "SF SemiBold", fontSize: 15, color: Colors.black)),
                                   )
                                 ],
                               ),
@@ -463,13 +412,11 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       //         fontFamily: "SF SemiBold",
                       //         fontSize: 17,
                       //         color: Colors.black54)),
-                      padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 5, bottom: 10),
+                      padding: EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 10),
                     ),
                     Container(
                       color: Colors.white,
-                      padding:
-                          const EdgeInsets.only(top: 10, left: 15, right: 15),
+                      padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -478,33 +425,30 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             width: 30,
                             height: 30,
                             child: ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(50),
-                                  bottomLeft: Radius.circular(50),
-                                  topRight: Radius.circular(50),
-                                  bottomRight: Radius.circular(50),
-                                ),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(50),
+                                bottomLeft: Radius.circular(50),
+                                topRight: Radius.circular(50),
+                                bottomRight: Radius.circular(50),
+                              ),
 
-                                // padding: const EdgeInsets.only(right: 15, left: 0),
-                                child: Image(
-                                  // color:40olors.red,
-                                  height: 30,
-                                  width: 30,
+                              // padding: const EdgeInsets.only(right: 15, left: 0),
+                              child: Container(
+                                height: 30,
+                                width: 30,
+                                child: Image.asset(
+                                  'assets/images/danhsachmon.png',
                                   fit: BoxFit.cover,
-                                  image: NetworkImage(
-                                      "https://cdn-icons-png.flaticon.com/512/4507/4507529.png"),
-                                )),
+                                ),
+                              ),
+                            ),
                           ),
                           SizedBox(
                             width: 15,
                           ),
                           Container(
                             alignment: Alignment.centerLeft,
-                            child: Text("Danh sách món",
-                                style: const TextStyle(
-                                    color: MaterialColors.black,
-                                    fontFamily: "SF Bold",
-                                    fontSize: 16)),
+                            child: Text("Danh sách món", style: const TextStyle(color: MaterialColors.black, fontFamily: "SF Bold", fontSize: 16)),
                           ),
                         ],
                       ),
@@ -515,102 +459,48 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                             ),
-                            padding: EdgeInsets.only(
-                                top: 18, bottom: 18, left: 22, right: 15),
+                            padding: EdgeInsets.only(top: 18, bottom: 18, left: 22, right: 15),
                             child: Row(
                               children: [
                                 Expanded(
                                   child: Row(
                                     children: [
-                                      Text("${e.quantity.toString()}",
-                                          style: const TextStyle(
-                                              fontFamily: "SF Medium",
-                                              fontSize: 16,
-                                              color: Colors.black)),
+                                      Text("${e.quantity.toString()}", style: const TextStyle(fontFamily: "SF Medium", fontSize: 16, color: Colors.black)),
                                       Padding(padding: EdgeInsets.all(2)),
-                                      Text("x",
-                                          style: const TextStyle(
-                                              fontFamily: "SF Medium",
-                                              fontSize: 16,
-                                              color: Color.fromRGBO(
-                                                  100, 100, 100, 1))),
+                                      Text("x", style: const TextStyle(fontFamily: "SF Medium", fontSize: 16, color: Color.fromRGBO(100, 100, 100, 1))),
                                       Padding(padding: EdgeInsets.all(5)),
-                                      Text(e.productName ?? "",
-                                          style: const TextStyle(
-                                              fontFamily: "SF Medium",
-                                              fontSize: 16,
-                                              color: Colors.black)),
+                                      Text(e.productName ?? "", style: const TextStyle(fontFamily: "SF Medium", fontSize: 16, color: Colors.black)),
                                     ],
                                   ),
                                 ),
-                                Text(
-                                    currencyFormatter
-                                            .format((e.price!).toInt())
-                                            .toString() +
-                                        "₫",
-                                    style: const TextStyle(
-                                        fontFamily: "SF Medium",
-                                        fontSize: 16,
-                                        color: Colors.black)),
+                                Text(currencyFormatter.format((e.price!).toInt()).toString() + "₫", style: const TextStyle(fontFamily: "SF Medium", fontSize: 16, color: Colors.black)),
                               ],
                             ));
                       }),
+                    // Container(
+                    //     decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: Colors.black12), top: BorderSide(color: Colors.black12))),
+                    //     padding: EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 20),
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //       children: [
+                    //         Text("Hình thức thanh toán", style: const TextStyle(fontFamily: "SF Bold", fontSize: 15, color: Colors.black87)),
+                    //         Row(
+                    //           crossAxisAlignment: CrossAxisAlignment.center,
+                    //           children: [
+                    //             Container(margin: EdgeInsets.only(right: 10), width: 20, child: Image.asset(widget.order.paymentName == 0 ? "assets/images/cash.png" : "assets/images/vnpay.png")),
+                    //             Text(widget.order.paymentName == 0 ? "Tiền mặt" : "VN Pay", style: const TextStyle(fontFamily: "SF Bold", fontSize: 15, color: Colors.black87)),
+                    //           ],
+                    //         )
+                    //       ],
+                    //     )),
                     Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border(
-                                bottom: BorderSide(color: Colors.black12),
-                                top: BorderSide(color: Colors.black12))),
-                        padding: EdgeInsets.only(
-                            left: 15, right: 15, top: 20, bottom: 20),
+                        decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Colors.black12))),
+                        padding: EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Hình thức thanh toán",
-                                style: const TextStyle(
-                                    fontFamily: "SF Bold",
-                                    fontSize: 15,
-                                    color: Colors.black87)),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                    margin: EdgeInsets.only(right: 10),
-                                    width: 20,
-                                    child: Image.network(
-                                        "https://cdn-icons-png.flaticon.com/512/2474/2474451.png")),
-                                Text(widget.order.paymentName ?? "",
-                                    style: const TextStyle(
-                                        fontFamily: "SF Bold",
-                                        fontSize: 15,
-                                        color: Colors.black87)),
-                              ],
-                            )
-                          ],
-                        )),
-                    Container(
-                        color: Colors.white,
-                        padding: EdgeInsets.only(
-                            left: 15, right: 15, top: 20, bottom: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Tổng cộng",
-                                style: const TextStyle(
-                                    fontFamily: "SF Bold",
-                                    fontSize: 16,
-                                    color: Colors.black87)),
-                            Text(
-                                currencyFormatter
-                                        .format((widget.order.total! -
-                                                widget.order.shipCost!)
-                                            .toInt())
-                                        .toString() +
-                                    "₫",
-                                style: const TextStyle(
-                                    fontFamily: "SF Bold",
-                                    fontSize: 18,
-                                    color: Colors.black87)),
+                            Text("Tổng cộng", style: const TextStyle(fontFamily: "SF Bold", fontSize: 16, color: Colors.black87)),
+                            Text(currencyFormatter.format((widget.order.total!).toInt()).toString() + "₫", style: const TextStyle(fontFamily: "SF Bold", fontSize: 18, color: Colors.green)),
                           ],
                         )),
                     Container(
@@ -619,8 +509,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       //         fontFamily: "SF SemiBold",
                       //         fontSize: 17,
                       //         color: Colors.black54)),
-                      padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 5, bottom: 10),
+                      padding: EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 10),
                     ),
                     Container(
                       color: Colors.white,
@@ -628,7 +517,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       //     color: Colors.white,
                       //     border: Border(
                       //         bottom: BorderSide(color: Colors.black12))),
-                      padding: EdgeInsets.all(15),
+                      padding: EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 20),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -638,40 +527,31 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               Container(
                                 margin: EdgeInsets.only(right: 15),
                                 width: 30,
-                                child: Image(
-                                  // color:70olors.red,
+                                child: Container(
                                   height: 30,
                                   width: 30,
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(
-                                      "https://cdn-icons-png.flaticon.com/512/4353/4353254.png"),
+                                  child: Image.asset(
+                                    'assets/images/taixe.png',
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Phạm Văn Dương",
-                                      style: const TextStyle(
-                                          fontFamily: "SF SemiBold",
-                                          fontSize: 16,
-                                          color: Colors.black87)),
+                                  Text(shipperName, style: const TextStyle(fontFamily: "SF SemiBold", fontSize: 16, color: Colors.black87)),
                                   SizedBox(
                                     height: 3,
                                   ),
-                                  Text("Tài xế",
-                                      style: const TextStyle(
-                                          fontFamily: "SF Regular",
-                                          fontSize: 14,
-                                          color:
-                                              Color.fromRGBO(180, 180, 180, 1)))
+                                  Text("Tài xế", style: const TextStyle(fontFamily: "SF Regular", fontSize: 14, color: Color.fromRGBO(180, 180, 180, 1)))
                                 ],
                               )
                             ],
                           ),
                           InkWell(
                             onTap: () {
-                              _makePhoneCall("0353270383");
+                              _makePhoneCall(orderDetailModel.shipperPhone ?? "0");
                             },
                             child: Icon(
                               Icons.phone_in_talk_outlined,
@@ -682,70 +562,68 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         ],
                       ),
                     ),
-                    if (statusId == 0 ||
-                        statusId == 1 ||
-                        statusId == 2 ||
-                        statusId == 3) ...[
-                      Container(
-                        padding: EdgeInsets.only(bottom: 25, top: 25),
-                        // height: 100,
+                    // if (statusId == 0 || statusId == 1 || statusId == 2 || statusId == 3) ...[
+                    //   Container(
+                    //     padding: EdgeInsets.only(bottom: 25, top: 25),
+                    //     // height: 100,
 
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  showModal();
-                                },
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      Icons.cancel_outlined,
-                                      size: 28,
-                                      color: Colors.red[800],
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text("Hủy đơn",
-                                        style: TextStyle(
-                                          fontFamily: "SF Medium",
-                                          fontSize: 16,
-                                          color: Colors.red[800],
-                                        ))
-                                  ],
-                                ),
-                              ),
-                              Column(
-                                children: [
-                                  Icon(
-                                    Icons.help_outline,
-                                    size: 28,
-                                    color: Color.fromRGBO(100, 100, 100, 1),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    "Trợ giúp",
-                                    style: TextStyle(
-                                      fontFamily: "SF Medium",
-                                      fontSize: 16,
-                                      color: Color.fromRGBO(100, 100, 100, 1),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ]),
-                      ),
-                    ]
+                    //     child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                    //       InkWell(
+                    //         onTap: () {
+                    //           showModal();
+                    //         },
+                    //         child: Column(
+                    //           children: [
+                    //             Icon(
+                    //               Icons.cancel_outlined,
+                    //               size: 28,
+                    //               color: Colors.red[800],
+                    //             ),
+                    //             SizedBox(
+                    //               height: 5,
+                    //             ),
+                    //             Text("Hủy đơn",
+                    //                 style: TextStyle(
+                    //                   fontFamily: "SF Medium",
+                    //                   fontSize: 16,
+                    //                   color: Colors.red[800],
+                    //                 ))
+                    //           ],
+                    //         ),
+                    //       ),
+                    //       Column(
+                    //         children: [
+                    //           Icon(
+                    //             Icons.help_outline,
+                    //             size: 28,
+                    //             color: Color.fromRGBO(100, 100, 100, 1),
+                    //           ),
+                    //           SizedBox(
+                    //             height: 5,
+                    //           ),
+                    //           Text(
+                    //             "Trợ giúp",
+                    //             style: TextStyle(
+                    //               fontFamily: "SF Medium",
+                    //               fontSize: 16,
+                    //               color: Color.fromRGBO(100, 100, 100, 1),
+                    //             ),
+                    //           )
+                    //         ],
+                    //       ),
+                    //     ]),
+                    //   ),
+                    // ],
+                    SizedBox(
+                      height: 30,
+                    )
                   ],
                 ),
               ),
             if (isLoading)
               SpinKitDualRing(
                 color: MaterialColors.primary,
-                size: 50.0,
+                size: 45.0,
               ),
           ],
         ));

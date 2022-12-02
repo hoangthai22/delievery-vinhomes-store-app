@@ -9,6 +9,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:store_app/apis/apiService.dart';
 import 'package:store_app/constants/Theme.dart';
 import 'package:store_app/models/categoryModel.dart';
@@ -97,23 +98,12 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                 _id = widget.productModel.id.toString();
                 listCategory = value;
                 _name.text = widget.productModel.name ?? "";
-                _packDescription.text =
-                    widget.productModel.packDescription ?? "";
-                _pricePerPack.text = currencyFormatter
-                    .format((widget.productModel.pricePerPack!).toInt())
-                    .toString();
-                _packNetWeight.text = currencyFormatter
-                    .format((widget.productModel.packNetWeight!).toInt())
-                    .toString();
-                _maximumQuantity.text = currencyFormatter
-                    .format((widget.productModel.maximumQuantity!).toInt())
-                    .toString();
-                _minimumQuantity.text = currencyFormatter
-                    .format((widget.productModel.minimumQuantity!).toInt())
-                    .toString();
-                _minimumDeIn.text = currencyFormatter
-                    .format((widget.productModel.minimumDeIn!).toInt())
-                    .toString();
+                _packDescription.text = widget.productModel.packDescription ?? "";
+                _pricePerPack.text = currencyFormatter.format((widget.productModel.pricePerPack!).toInt()).toString();
+                _packNetWeight.text = currencyFormatter.format((widget.productModel.packNetWeight!).toInt()).toString();
+                _maximumQuantity.text = currencyFormatter.format((widget.productModel.maximumQuantity!).toInt()).toString();
+                _minimumQuantity.text = currencyFormatter.format((widget.productModel.minimumQuantity!).toInt()).toString();
+                _minimumDeIn.text = currencyFormatter.format((widget.productModel.minimumDeIn!).toInt()).toString();
                 _unit = widget.productModel.unit.toString();
                 if (_unit == listUnit[0].value) {
                   listPackNetWeight = listPackNetWeightKg;
@@ -166,47 +156,44 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
         packDescription: _packDescription.text,
         maximumQuantity: double.parse(_maximumQuantity.text),
         minimumQuantity: double.parse(_minimumQuantity.text),
-        minimumDeIn:
-            _minimumDeIn.text != "" ? double.parse(_minimumDeIn.text) : 1,
+        minimumDeIn: _minimumDeIn.text != "" ? double.parse(_minimumDeIn.text) : 1,
         unit: _unit,
         pricePerPack: double.parse(_pricePerPack.text),
         storeId: _storeId,
         rate: 0.0,
         description: _description.text);
     Map valueMap;
-    ApiServices.putUpdateProduct(product, widget.productModel.id ?? "")
-        .then((value) => {
-              if (value != null)
-                {
-                  valueMap = convert.jsonDecode(value),
-                  setState(() {
-                    isLoadingSubmit = false;
+    ApiServices.putUpdateProduct(product, widget.productModel.id ?? "").then((value) => {
+          if (value != null)
+            {
+              valueMap = convert.jsonDecode(value),
+              setState(() {
+                isLoadingSubmit = false;
 
-                    if (valueMap["message"] ==
-                        "Hiện tại danh mục đang có trong menu !!Vui lòng xóa danh mục khỏi menu và thử lại ") {
-                      Fluttertoast.showToast(
-                          msg: valueMap["message"],
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.TOP,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.red,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                    } else {
-                      Fluttertoast.showToast(
-                          msg: "Cập nhật sản phẩm thành công",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.TOP,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.green,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                      Navigator.pop(context);
-                    }
-                    ;
-                  }),
+                if (valueMap["message"] == "Hiện tại danh mục đang có trong menu !!Vui lòng xóa danh mục khỏi menu và thử lại ") {
+                  Fluttertoast.showToast(
+                      msg: valueMap["message"],
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.TOP,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                } else {
+                  Fluttertoast.showToast(
+                      msg: "Cập nhật sản phẩm thành công",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.TOP,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.green,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                  Navigator.pop(context);
                 }
-            });
+                ;
+              }),
+            }
+        });
   }
 
   Future _pickImage(ImageSource source) async {
@@ -230,15 +217,19 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 255, 255, 255),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [MaterialColors.primary, Color(0xfff7892b)]),
+            ),
+          ),
           centerTitle: true,
           iconTheme: IconThemeData(
-            color: Colors.black, //change your color here
+            color: Colors.white, //change your color here
           ),
           title: Text(
             "Tạo sản phẩm",
             style: TextStyle(
-              color: MaterialColors.black,
+              color: MaterialColors.white,
               fontFamily: "SF Bold",
             ),
           ),
@@ -266,8 +257,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                         Stack(
                           children: [
                             Container(
-                                margin: EdgeInsets.only(
-                                    left: 10, bottom: 10, top: 10),
+                                margin: EdgeInsets.only(left: 10, bottom: 10, top: 10),
                                 width: 165,
                                 height: 155,
                                 // color: Colors.amber,
@@ -310,12 +300,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                 },
                                 child: Container(
                                     padding: EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(50)),
-                                        border:
-                                            Border.all(color: Colors.white)),
+                                    decoration: BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(50)), border: Border.all(color: Colors.white)),
                                     child: Icon(
                                       Icons.clear,
                                       color: Colors.white,
@@ -329,8 +314,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                         Stack(
                           children: [
                             Container(
-                                margin: EdgeInsets.only(
-                                    left: 10, bottom: 10, top: 10),
+                                margin: EdgeInsets.only(left: 10, bottom: 10, top: 10),
                                 width: 165,
                                 height: 155,
                                 // color: Colors.amber,
@@ -366,8 +350,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                         Stack(
                           children: [
                             Container(
-                                margin: EdgeInsets.only(
-                                    left: 10, bottom: 15, top: 10),
+                                margin: EdgeInsets.only(left: 10, bottom: 15, top: 10),
                                 width: 165,
                                 height: 155,
                                 // color: Colors.amber,
@@ -376,25 +359,17 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     DottedBorder(
-                                      color: !validImage
-                                          ? Colors.red
-                                          : MaterialColors.secondary,
+                                      color: !validImage ? Colors.red : MaterialColors.secondary,
                                       radius: Radius.circular(16),
                                       child: ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(12)),
+                                        borderRadius: BorderRadius.all(Radius.circular(12)),
                                         child: Container(
                                           height: 150,
                                           width: 150,
                                           alignment: Alignment.center,
                                           child: Text(
                                             "Ảnh",
-                                            style: TextStyle(
-                                                color: !validImage
-                                                    ? Colors.red[700]
-                                                    : MaterialColors.secondary,
-                                                fontFamily: "SF Medium",
-                                                fontSize: 15),
+                                            style: TextStyle(color: !validImage ? Colors.red[700] : MaterialColors.secondary, fontFamily: "SF Medium", fontSize: 15),
                                           ),
                                           // color: Colors.amber,
                                         ),
@@ -411,8 +386,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                           children: [
                             Text(
                               "Ảnh không được đê trống",
-                              style: TextStyle(
-                                  color: Colors.red[700], fontSize: 13),
+                              style: TextStyle(color: Colors.red[700], fontSize: 13),
                             )
                           ],
                         ),
@@ -427,12 +401,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                               // _showSelectPhotoOptions(context);
                             },
                             child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
-                                  border: Border.all(
-                                      color: MaterialColors.secondary)),
+                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(8)), border: Border.all(color: MaterialColors.secondary)),
                               width: 135,
                               height: 40,
                               margin: EdgeInsets.only(bottom: 15, left: 15),
@@ -450,10 +419,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                   Padding(padding: EdgeInsets.all(5)),
                                   Text(
                                     "Tải ảnh lên",
-                                    style: TextStyle(
-                                        color: MaterialColors.secondary,
-                                        fontFamily: "SF Bold",
-                                        fontSize: 16),
+                                    style: TextStyle(color: MaterialColors.secondary, fontFamily: "SF Bold", fontSize: 16),
                                   ),
                                 ],
                               ),
@@ -465,12 +431,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                               // _showSelectPhotoOptions(context);
                             },
                             child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
-                                  border: Border.all(
-                                      color: MaterialColors.secondary)),
+                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(8)), border: Border.all(color: MaterialColors.secondary)),
 
                               width: 135,
                               height: 40,
@@ -489,10 +450,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                   Padding(padding: EdgeInsets.all(5)),
                                   Text(
                                     "Chụp ảnh",
-                                    style: TextStyle(
-                                        color: MaterialColors.secondary,
-                                        fontFamily: "SF Bold",
-                                        fontSize: 16),
+                                    style: TextStyle(color: MaterialColors.secondary, fontFamily: "SF Bold", fontSize: 16),
                                   ),
                                   // SelectPhoto(
                                   //   onTap: () => onTap(ImageSource.gallery),
@@ -506,8 +464,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                         ],
                       ),
                       Container(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 15, top: 15, bottom: 25),
+                        padding: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 25),
                         decoration: BoxDecoration(color: Colors.white),
                         child: Column(
                           children: [
@@ -523,8 +480,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                 Padding(padding: EdgeInsets.all(2)),
                                 Text(
                                   "*",
-                                  style: TextStyle(
-                                      color: Colors.red, fontSize: 16),
+                                  style: TextStyle(color: Colors.red, fontSize: 16),
                                 )
                               ],
                             ),
@@ -569,13 +525,10 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                   fontSize: 16,
                                                 ),
                                               ),
-                                              Padding(
-                                                  padding: EdgeInsets.all(2)),
+                                              Padding(padding: EdgeInsets.all(2)),
                                               Text(
                                                 "*",
-                                                style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 16),
+                                                style: TextStyle(color: Colors.red, fontSize: 16),
                                               )
                                             ],
                                           ),
@@ -587,8 +540,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                             fontSize: 15,
                                           ),
                                           validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
+                                            if (value == null || value.isEmpty) {
                                               return "Giá bán không được để trống";
                                             }
                                             return null;
@@ -617,13 +569,10 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                   fontSize: 16,
                                                 ),
                                               ),
-                                              Padding(
-                                                  padding: EdgeInsets.all(2)),
+                                              Padding(padding: EdgeInsets.all(2)),
                                               Text(
                                                 "*",
-                                                style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 16),
+                                                style: TextStyle(color: Colors.red, fontSize: 16),
                                               )
                                             ],
                                           ),
@@ -631,8 +580,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                         DropdownButtonFormField<String>(
                                           isExpanded: true,
                                           validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
+                                            if (value == null || value.isEmpty) {
                                               return "Đơn vị không được để trống";
                                             }
                                             return null;
@@ -648,12 +596,9 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                 valid = true;
                                               }
                                               if (_unit == listUnit[0].value) {
-                                                listPackNetWeight =
-                                                    listPackNetWeightKg;
-                                              } else if (_unit ==
-                                                  listUnit[1].value) {
-                                                listPackNetWeight =
-                                                    listPackNetWeightGam;
+                                                listPackNetWeight = listPackNetWeightKg;
+                                              } else if (_unit == listUnit[1].value) {
+                                                listPackNetWeight = listPackNetWeightGam;
                                               } else {
                                                 listPackNetWeight = [];
                                               }
@@ -697,13 +642,10 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                   fontSize: 16,
                                                 ),
                                               ),
-                                              Padding(
-                                                  padding: EdgeInsets.all(2)),
+                                              Padding(padding: EdgeInsets.all(2)),
                                               Text(
                                                 "*",
-                                                style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 16),
+                                                style: TextStyle(color: Colors.red, fontSize: 16),
                                               )
                                             ],
                                           ),
@@ -711,15 +653,12 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                         DropdownButtonFormField<String>(
                                           isExpanded: true,
                                           validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
+                                            if (value == null || value.isEmpty) {
                                               return "Danh mục không được để trống";
                                             }
                                             return null;
                                           },
-                                          value: _category == ''
-                                              ? null
-                                              : _category,
+                                          value: _category == '' ? null : _category,
                                           isDense: true,
                                           onChanged: (value) {
                                             setState(() {
@@ -767,13 +706,10 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                     fontSize: 18,
                                                   ),
                                                 ),
-                                                Padding(
-                                                    padding: EdgeInsets.all(2)),
+                                                Padding(padding: EdgeInsets.all(2)),
                                                 Text(
                                                   "*",
-                                                  style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize: 18),
+                                                  style: TextStyle(color: Colors.red, fontSize: 18),
                                                 )
                                               ],
                                             ),
@@ -781,28 +717,21 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                           DropdownButtonFormField<String>(
                                             isExpanded: true,
                                             validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
+                                              if (value == null || value.isEmpty) {
                                                 return "Đóng gói không được để trống";
                                               }
                                               return null;
                                             },
-                                            value: packNetWeightItem == ''
-                                                ? null
-                                                : packNetWeightItem,
+                                            value: packNetWeightItem == '' ? null : packNetWeightItem,
                                             isDense: true,
                                             onChanged: (value) {
                                               setState(() {
                                                 packNetWeightItem = value!;
                                                 _packDescription.text = value;
-                                                for (var element
-                                                    in listPackNetWeight) {
-                                                  if (element["value"] ==
-                                                      value) {
-                                                    var tmp = element["pack"]
-                                                        .toDouble();
-                                                    _packNetWeight.text =
-                                                        tmp.toString();
+                                                for (var element in listPackNetWeight) {
+                                                  if (element["value"] == value) {
+                                                    var tmp = element["pack"].toDouble();
+                                                    _packNetWeight.text = tmp.toString();
                                                   }
                                                 }
                                                 if (value.isEmpty) {
@@ -812,12 +741,10 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                                 }
                                               });
                                             },
-                                            items:
-                                                listPackNetWeight.map((value) {
+                                            items: listPackNetWeight.map((value) {
                                               return DropdownMenuItem<String>(
                                                 value: value["value"],
-                                                child: Text(
-                                                    value["value"].toString()),
+                                                child: Text(value["value"].toString()),
                                               );
                                             }).toList(),
                                           ),
@@ -835,8 +762,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                           title: 'Thêm thông tin',
                           content: Container(
                             color: Colors.white,
-                            padding: EdgeInsets.only(
-                                left: 15, right: 15, bottom: 25),
+                            padding: EdgeInsets.only(left: 15, right: 15, bottom: 25),
                             child: Column(
                               children: [
                                 Row(
@@ -859,14 +785,12 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                               ),
                                             ),
                                             TextFormField(
-                                              keyboardType:
-                                                  TextInputType.number,
+                                              keyboardType: TextInputType.number,
                                               style: TextStyle(
                                                 fontSize: 15,
                                               ),
                                               decoration: InputDecoration(
-                                                hintStyle:
-                                                    TextStyle(fontSize: 16),
+                                                hintStyle: TextStyle(fontSize: 16),
                                                 hintText: '0',
                                               ),
                                               controller: _minimumDeIn,
@@ -897,14 +821,12 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                               ),
                                             ),
                                             TextFormField(
-                                              keyboardType:
-                                                  TextInputType.number,
+                                              keyboardType: TextInputType.number,
                                               style: TextStyle(
                                                 fontSize: 15,
                                               ),
                                               decoration: InputDecoration(
-                                                hintStyle:
-                                                    TextStyle(fontSize: 15),
+                                                hintStyle: TextStyle(fontSize: 15),
                                                 hintText: '0',
                                               ),
                                               controller: _maximumQuantity,
@@ -932,14 +854,12 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                               ),
                                             ),
                                             TextFormField(
-                                              keyboardType:
-                                                  TextInputType.number,
+                                              keyboardType: TextInputType.number,
                                               style: TextStyle(
                                                 fontSize: 15,
                                               ),
                                               decoration: InputDecoration(
-                                                hintStyle:
-                                                    TextStyle(fontSize: 15),
+                                                hintStyle: TextStyle(fontSize: 15),
                                                 hintText: '0',
                                               ),
                                               controller: _minimumQuantity,
@@ -971,16 +891,14 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                                               ),
                                             ),
                                             TextFormField(
-                                              keyboardType:
-                                                  TextInputType.multiline,
+                                              keyboardType: TextInputType.multiline,
                                               minLines: 2,
                                               maxLines: 5,
                                               style: TextStyle(
                                                 fontSize: 15,
                                               ),
                                               decoration: InputDecoration(
-                                                hintStyle:
-                                                    TextStyle(fontSize: 15),
+                                                hintStyle: TextStyle(fontSize: 15),
                                                 hintText: '',
                                               ),
                                               controller: _description,
@@ -1003,38 +921,38 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                 bottom: 0,
                 child: Container(
                     decoration: BoxDecoration(color: Colors.white),
-                    padding: EdgeInsets.only(
-                        left: 15, right: 15, top: 10, bottom: 10),
+                    padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
                     width: MediaQuery.of(context).size.width,
                     child: Container(
                       height: 45,
-                      child: ElevatedButton(
-                        child: Text(
-                          "Cập nhật",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "SF Bold",
-                              fontSize: 16),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: MaterialColors.primary,
-                          textStyle: TextStyle(color: Colors.black),
-                          shadowColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                      child: InkWell(
+                        onTap: () {
+                          if (_image == null && isImage == "") {
+                            setState(() {
+                              validImage = false;
+                            });
+                          } else if (_formKey.currentState!.validate() && (_image != null || isImage != "")) {
+                            hanldeUpdate();
+                          }
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(8)),
+                              boxShadow: <BoxShadow>[BoxShadow(color: Colors.grey.shade200, offset: const Offset(2, 4), blurRadius: 5, spreadRadius: 2)],
+                              gradient: const LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [MaterialColors.primary, Color(0xfff7892b)])),
+                          child: const Text(
+                            'Cập nhật',
+                            style: TextStyle(
+                              fontSize: 16,
+                              height: 1,
+                              color: Colors.white,
+                              fontFamily: "SF SemiBold",
+                            ),
                           ),
                         ),
-                        onPressed: () => {
-                          if (_image == null && isImage == "")
-                            {
-                              setState(() {
-                                validImage = false;
-                              })
-                            }
-                          else if (_formKey.currentState!.validate() &&
-                              (_image != null || isImage != ""))
-                            {hanldeUpdate()},
-                        },
                       ),
                     ))),
             if (isLoadingSubmit)
@@ -1045,7 +963,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                   width: MediaQuery.of(context).size.width,
                   child: SpinKitDualRing(
                     color: MaterialColors.primary,
-                    size: 50.0,
+                    size: 40.0,
                   ),
                 ),
               ),

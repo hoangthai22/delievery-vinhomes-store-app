@@ -8,6 +8,7 @@ class AppProvider with ChangeNotifier {
   String name = "";
   String avatar = "";
   int countOrder = 0;
+  int countOrderMode3 = 0;
   List<OrderModel> orderListMode3 = [];
   late StoreModel storeModel = StoreModel();
   bool status = false;
@@ -19,6 +20,11 @@ class AppProvider with ChangeNotifier {
 
   void setCountOrder(int count) {
     countOrder = count;
+    notifyListeners();
+  }
+
+  void setCountOrderMode3(int count) {
+    countOrderMode3 = count;
     notifyListeners();
   }
 
@@ -63,6 +69,7 @@ class AppProvider with ChangeNotifier {
   String get getUid => uid;
   String get getName => name;
   int get getCountOrder => countOrder;
+  int get getCountOrderMode3 => countOrderMode3;
   List<OrderModel> get getOrderListMode3 => orderListMode3;
   StoreModel get getStoreModel => storeModel;
 }

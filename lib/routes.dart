@@ -4,11 +4,9 @@ import 'package:store_app/main.dart';
 import 'package:store_app/screens/app.dart';
 import 'package:store_app/screens/cancel_confirm_order_screen.dart';
 import 'package:store_app/screens/change_password_screen.dart';
-import 'package:store_app/screens/home_screen.dart';
-import 'package:store_app/screens/landing_screen.dart';
 import 'package:store_app/screens/login_screen.dart';
 import 'package:store_app/screens/new_product_screen.dart';
-import 'package:store_app/widgets/order/order_list_done.dart';
+import 'package:store_app/screens/order_history_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -25,7 +23,7 @@ class RouteGenerator {
       case '/new-product':
         return MaterialPageRoute(builder: (_) => NewProductScreen());
       case '/order-history':
-        return MaterialPageRoute(builder: (_) => OrderListDone());
+        return MaterialPageRoute(builder: (_) => OrderHistoryScreen());
       case '/cancel-order':
         return MaterialPageRoute(builder: (_) => CancelConfirmOrderScreen());
       case '/change-password':
