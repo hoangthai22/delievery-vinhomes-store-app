@@ -18,38 +18,45 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  TabBar get _tabBar => TabBar(
+        tabs: <Widget>[
+          Tab(
+            // icon: Icon(Icons.cloud_outlined),
+            text: "Gọi món",
+          ),
+          Tab(
+            // icon: Icon(Icons.beach_access_sharp),
+            text: "Đi chợ",
+          ),
+          Tab(
+            // icon: Icon(Icons.brightness_5_sharp),
+            text: "Đặt hàng",
+          ),
+        ],
+      );
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: 0,
       length: 3,
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Color.fromARGB(255, 255, 255, 255),
-          centerTitle: true,
-          title: Text(
-            "Thực đơn",
-            style:
-                TextStyle(color: MaterialColors.black, fontFamily: "SF Bold"),
-          ),
-          bottom: const TabBar(
-            tabs: <Widget>[
-              Tab(
-                // icon: Icon(Icons.cloud_outlined),
-                text: "Gọi món",
+            automaticallyImplyLeading: false,
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [MaterialColors.primary, Color(0xfff7892b)]),
               ),
-              Tab(
-                // icon: Icon(Icons.beach_access_sharp),
-                text: "Đi chợ",
-              ),
-              Tab(
-                // icon: Icon(Icons.brightness_5_sharp),
-                text: "Đặt hàng",
-              ),
-            ],
-          ),
-        ),
+            ),
+            centerTitle: true,
+            title: Text(
+              "Thực đơn",
+              style: TextStyle(color: MaterialColors.white, fontFamily: "SF Bold"),
+            ),
+            bottom: PreferredSize(
+              preferredSize: _tabBar.preferredSize,
+              child: ColoredBox(color: Colors.white, child: _tabBar),
+            )),
         body: TabBarView(
           children: <Widget>[
             MenuTab(menuIndex: "1", storeId: widget.storeId),

@@ -16,36 +16,38 @@ class _AccordionState extends State<Accordion> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        setState(() {
-          _showContent = !_showContent;
-        });
-      },
       child: Container(
         color: Colors.white,
         child: Column(children: [
           ListTile(
               contentPadding: EdgeInsets.only(left: 15),
-              title: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    widget.title,
-                    style: TextStyle(
-                      fontFamily: "SF SemiBold",
-                      fontSize: 18,
-                      color: MaterialColors.secondary,
+              title: InkWell(
+                onTap: () {
+                  setState(() {
+                    _showContent = !_showContent;
+                  });
+                },
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.title,
+                      style: TextStyle(
+                        fontFamily: "SF SemiBold",
+                        fontSize: 18,
+                        color: MaterialColors.secondary,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  Padding(padding: EdgeInsets.all(5)),
-                  Icon(
-                      _showContent
-                          ? Icons.keyboard_arrow_up_outlined
-                          : Icons.keyboard_arrow_down_outlined,
-                      color: MaterialColors.secondary),
-                ],
+                    Padding(padding: EdgeInsets.all(5)),
+                    Icon(
+                        _showContent
+                            ? Icons.keyboard_arrow_up_outlined
+                            : Icons.keyboard_arrow_down_outlined,
+                        color: MaterialColors.secondary),
+                  ],
+                ),
               )),
           _showContent
               ? Container(

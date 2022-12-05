@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:store_app/apis/apiService.dart';
 import 'package:store_app/constants/Theme.dart';
 import 'package:store_app/models/productMenuModel.dart';
@@ -38,8 +39,7 @@ class MenuModal extends StatefulWidget {
   late ValueChanged<void> function;
   late String menuId;
   late String storeId;
-  MenuModal(
-      {required this.function, required this.menuId, required this.storeId});
+  MenuModal({required this.function, required this.menuId, required this.storeId});
   @override
   State<StatefulWidget> createState() => _MenuModal();
 }
@@ -53,23 +53,22 @@ class _MenuModal extends State<MenuModal> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    ApiServices.getListProductOutOfMenu(widget.menuId, widget.storeId, 1, 100)
-        .then((value) => {
-              if (value != null)
-                {
-                  setState(
-                    () => {productOutOfMenus = value, _isLoadingCircle = false},
-                  )
-                }
-              else
-                {
-                  setState(() {
-                    setState(() {
-                      _isLoadingCircle = false;
-                    });
-                  })
-                }
-            });
+    ApiServices.getListProductOutOfMenu(widget.menuId, widget.storeId, 1, 100).then((value) => {
+          if (value != null)
+            {
+              setState(
+                () => {productOutOfMenus = value, _isLoadingCircle = false},
+              )
+            }
+          else
+            {
+              setState(() {
+                setState(() {
+                  _isLoadingCircle = false;
+                });
+              })
+            }
+        });
     // print(widget.id);
   }
 
@@ -86,23 +85,22 @@ class _MenuModal extends State<MenuModal> {
     setState(() {
       _isLoadingSubmit = true;
     });
-    ApiServices.postJoinMenu(productCheckedList, widget.menuId)
-        .then((value) => {
-              if (value != null)
-                {
-                  Navigator.pop(context),
-                  setState(() {
-                    _isLoadingSubmit = false;
-                  }),
-                  widget.function("")
-                }
-              else
-                {
-                  setState(() {
-                    _isLoadingSubmit = false;
-                  })
-                }
-            });
+    ApiServices.postJoinMenu(productCheckedList, widget.menuId).then((value) => {
+          if (value != null)
+            {
+              Navigator.pop(context),
+              setState(() {
+                _isLoadingSubmit = false;
+              }),
+              widget.function("")
+            }
+          else
+            {
+              setState(() {
+                _isLoadingSubmit = false;
+              })
+            }
+        });
   }
 
   hanldeChecked(id) {
@@ -119,8 +117,7 @@ class _MenuModal extends State<MenuModal> {
       for (var i = 0; i < productOutOfMenus.length; i++) {
         if (productOutOfMenus[i].id == id) {
           setState(() {
-            productCheckedList.add(CheckedItem(
-                id: id, price: productOutOfMenus[i].pricePerPack!.toDouble()));
+            productCheckedList.add(CheckedItem(id: id, price: productOutOfMenus[i].pricePerPack!.toDouble()));
           });
         }
       }
@@ -146,10 +143,7 @@ class _MenuModal extends State<MenuModal> {
                   Container(
                       child: Text(
                     "Danh sách sản phẩm",
-                    style: TextStyle(
-                        color: MaterialColors.black,
-                        fontFamily: "SF Bold",
-                        fontSize: 20),
+                    style: TextStyle(color: MaterialColors.black, fontFamily: "SF Bold", fontSize: 20),
                   )),
                   if (productOutOfMenus.isNotEmpty)
                     ...productOutOfMenus.map(
@@ -165,21 +159,22 @@ class _MenuModal extends State<MenuModal> {
         ),
         if (!_isLoadingCircle && productOutOfMenus.isEmpty)
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.5 - 60,
+            top: MediaQuery.of(context).size.height * 0.5 - 150,
             child: Center(
                 child: Container(
               child: Column(
                 children: [
-                  Icon(Icons.no_food_rounded),
-                  SizedBox(
-                    height: 10,
+                  Container(
+                    height: 150,
+                    width: 150,
+                    child: Image.asset(
+                      'assets/images/empty-food.png',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   Text(
                     "Không có sản phầm nào phù hợp",
-                    style: TextStyle(
-                        color: MaterialColors.black,
-                        fontFamily: "SF Regular",
-                        fontSize: 15),
+                    style: TextStyle(color: MaterialColors.black, fontFamily: "SF Regular", fontSize: 16),
                   )
                 ],
               ),
@@ -189,65 +184,96 @@ class _MenuModal extends State<MenuModal> {
             bottom: 0,
             child: Container(
                 decoration: BoxDecoration(color: Colors.white),
-                padding:
-                    EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
+                padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
                 width: MediaQuery.of(context).size.width,
                 child: Row(
                   children: [
                     Expanded(
                       child: Container(
-                        height: 45,
-                        child: ElevatedButton(
-                          child: Text(
-                            "Trờ lại",
-                            style: TextStyle(
-                                color: MaterialColors.primary,
-                                fontFamily: "SF Bold",
-                                fontSize: 18),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
-                            textStyle: TextStyle(color: Colors.black),
-                            shadowColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                  color: MaterialColors.primary, width: 1),
-                              borderRadius: BorderRadius.circular(8),
+                          decoration: const BoxDecoration(color: Colors.white),
+                          // padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
+                          width: MediaQuery.of(context).size.width,
+                          child: SizedBox(
+                            height: 38,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                // padding: const EdgeInsets.symmetric(vertical: 5),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                                    boxShadow: <BoxShadow>[BoxShadow(color: Colors.grey.shade200, offset: const Offset(2, 4), blurRadius: 5, spreadRadius: 2)],
+                                    gradient:
+                                        const LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color.fromRGBO(220, 220, 220, 1), Color.fromRGBO(200, 200, 200, 1)])),
+                                child: const Text(
+                                  'Đóng',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black54,
+                                    height: 1,
+                                    fontFamily: "SF SemiBold",
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                          onPressed: () => {Navigator.pop(context)},
-                        ),
-                      ),
+                          )),
                     ),
                     Padding(padding: EdgeInsets.all(7)),
                     Expanded(
-                      child: Container(
-                        height: 45,
-                        child: ElevatedButton(
-                            child: Text(
-                              "Xác nhận",
-                              style: TextStyle(
-                                  color: productCheckedList.isNotEmpty
-                                      ? Colors.black
-                                      : Colors.black.withOpacity(0.5),
-                                  fontFamily: "SF Bold",
-                                  fontSize: 18),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              primary: productCheckedList.isNotEmpty
-                                  ? MaterialColors.primary
-                                  : MaterialColors.primary.withOpacity(0.5),
-                              textStyle: TextStyle(color: Colors.black),
-                              shadowColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                            decoration: const BoxDecoration(color: Colors.white),
+                            // padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
+                            width: MediaQuery.of(context).size.width,
+                            child: SizedBox(
+                              height: 42,
+                              child: InkWell(
+                                onTap: () {
+                                  productCheckedList.isNotEmpty ? hanldeCallback() : null;
+                                },
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(Radius.circular(8)),
+                                      boxShadow: <BoxShadow>[BoxShadow(color: Colors.grey.shade200, offset: const Offset(2, 4), blurRadius: 5, spreadRadius: 2)],
+                                      gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [
+                                        productCheckedList.isNotEmpty ? MaterialColors.primary : MaterialColors.primary.withOpacity(0.5),
+                                        productCheckedList.isNotEmpty ? Color(0xfff7892b) : Color(0xfff7892b).withOpacity(0.5)
+                                      ])),
+                                  child: Text(
+                                    'Xác nhận',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      height: 1,
+                                      color: productCheckedList.isNotEmpty ? Colors.white : Colors.white.withOpacity(0.5),
+                                      fontFamily: "SF SemiBold",
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                            onPressed: () => productCheckedList.isNotEmpty
-                                ? hanldeCallback()
-                                : null),
-                      ),
-                    ),
+                            ))
+                        // Container(
+                        //   height: 45,
+                        //   child: ElevatedButton(
+                        //       child: Text(
+                        //         "Xác nhận",
+                        //         style: TextStyle(color: productCheckedList.isNotEmpty ? Colors.white : Colors.white.withOpacity(0.5), fontFamily: "SF Bold", fontSize: 18),
+                        //       ),
+                        //       style: ElevatedButton.styleFrom(
+                        //         primary: productCheckedList.isNotEmpty ? MaterialColors.primary : MaterialColors.primary.withOpacity(0.5),
+                        //         textStyle: TextStyle(color: Colors.black),
+                        //         shadowColor: Colors.white,
+                        //         shape: RoundedRectangleBorder(
+                        //           borderRadius: BorderRadius.circular(8),
+                        //         ),
+                        //       ),
+                        //       onPressed: () => productCheckedList.isNotEmpty ? hanldeCallback() : null),
+                        // ),
+                        ),
                   ],
                 ))),
         if (_isLoadingSubmit) ...[
@@ -255,20 +281,17 @@ class _MenuModal extends State<MenuModal> {
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             color: Colors.white.withOpacity(0.5),
-            child: SpinKitRing(
+            child: SpinKitDualRing(
               color: MaterialColors.primary,
-              size: 50.0,
+              size: 45.0,
             ),
           )
         ],
         if (_isLoadingCircle)
-          Center(
-              child: Container(
-                  margin: EdgeInsets.only(bottom: 20, top: 20),
-                  child: CircularProgressIndicator(
-                    strokeWidth: 5.0,
-                    color: MaterialColors.primary,
-                  ))),
+          SpinKitDualRing(
+            color: MaterialColors.primary,
+            size: 45.0,
+          ),
       ],
     );
   }

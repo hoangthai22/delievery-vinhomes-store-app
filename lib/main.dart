@@ -2,9 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:store_app/apis/apiService.dart';
 import 'package:store_app/constants/Theme.dart';
+import 'package:store_app/models/orderModel.dart';
 import 'package:store_app/models/storeModel.dart';
 import 'package:store_app/provider/appProvider.dart';
 import 'package:store_app/routes.dart';
@@ -82,16 +85,11 @@ class LandingScreen extends StatelessWidget {
         ApiServices.getStoreById(success.email)
             .then((value) => {
                   store = value,
-                  print("store: " + store.toString()),
-                  print(store.image),
-
                   context.read<AppProvider>().setName(store.name),
                   context.read<AppProvider>().setAvatar(store.image),
                   context.read<AppProvider>().setStoreModel(store),
                   context.read<AppProvider>().setStatus(store.status!),
-
                   Navigator.pushReplacementNamed(context, '/home')
-                  // context.read<AppProvider>().setName(store.name)
                 })
             .catchError((onError) => {print(onError)});
       } else {
@@ -102,7 +100,10 @@ class LandingScreen extends StatelessWidget {
 
     return Scaffold(
       body: Center(
-        child: CircularProgressIndicator(),
+        child: SpinKitFoldingCube(
+          color: MaterialColors.primary,
+          size: 50.0,
+        ),
       ),
     );
   }

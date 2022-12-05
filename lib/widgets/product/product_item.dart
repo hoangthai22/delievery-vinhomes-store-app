@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_dialogs/material_dialogs.dart';
+import 'package:material_dialogs/widgets/buttons/icon_button.dart';
+import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 import 'package:store_app/apis/apiService.dart';
 import 'package:store_app/constants/Theme.dart';
 import 'package:store_app/models/productModel.dart';
@@ -49,179 +52,108 @@ class _ProductItemState extends State<ProductItem> {
             ],
           ),
           margin: const EdgeInsets.only(left: 10, right: 10, bottom: 7, top: 7),
-          child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                      height: 100,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(padding: EdgeInsets.all(5)),
-                          Container(
-                            // width: 100,
+          child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Expanded(
+              child: Container(
+                  height: 100,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(padding: EdgeInsets.all(5)),
+                      Container(
+                        // width: 100,
 
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(8),
-                                  bottomLeft: Radius.circular(8),
-                                  topRight: Radius.circular(8),
-                                  bottomRight: Radius.circular(8),
-                                ),
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              bottomLeft: Radius.circular(8),
+                              topRight: Radius.circular(8),
+                              bottomRight: Radius.circular(8),
+                            ),
 
-                                // padding: const EdgeInsets.only(right: 15, left: 0),
-                                child: Image(
-                                  // color:70olors.red,
-                                  height: 80,
-                                  width: 80,
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(widget.product.image ??
-                                      "https://firebasestorage.googleapis.com/v0/b/lucky-science-341916.appspot.com/o/assets%2FImagesProducts%2Fa9bf8b5b-f24e-4452-92af-bfcd779983ff?alt=media&token=f17ac3db-4684-4e12-9262-98b2c94b2e57"),
-                                )),
-                          ),
-                          Padding(padding: EdgeInsets.all(8)),
-                          Expanded(
-                            child: Container(
-                                // width: 100,
-                                child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  child: Text(
-                                    widget.product.name!,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                        fontFamily: "SF Bold",
-                                        fontSize: 16,
-                                        overflow: TextOverflow.ellipsis),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(top: 5, bottom: 5),
-                                  child: Text(
-                                    widget.product.unit != ""
-                                        ? widget.product.unit!
-                                        : "",
-                                    style: TextStyle(
-                                        fontFamily: "SF Regular",
-                                        fontSize: 15,
-                                        color: Colors.grey),
-                                  ),
-                                ),
-                                Container(
-                                  child: Text(
-                                    currencyFormatter
-                                            .format(
-                                                (widget.product.pricePerPack!)
-                                                    .toInt())
-                                            .toString() +
-                                        "₫",
-                                    style: TextStyle(
-                                        fontFamily: "SF Semibold",
-                                        fontSize: 16,
-                                        color: MaterialColors.primary),
-                                  ),
-                                ),
-                              ],
+                            // padding: const EdgeInsets.only(right: 15, left: 0),
+                            child: Image(
+                              // color:70olors.red,
+                              height: 80,
+                              width: 80,
+                              fit: BoxFit.cover,
+                              image: NetworkImage(widget.product.image ??
+                                  "https://firebasestorage.googleapis.com/v0/b/deliveryfood-9c436.appspot.com/o/food%2Ftopic-2.webp?alt=media&token=54a5086f-f2ea-4009-9479-28624019703e"),
                             )),
-                          )
-                        ],
-                      )),
-                ),
-                InkWell(
-                  onTap: () {
-                    showDialog<String>(
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                        title: const Text(
-                          'Bạn có chắc muốn xóa sản phẩm này?',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "SF Bold",
-                              fontSize: 18),
-                          textAlign: TextAlign.center,
-                        ),
-                        actions: <Widget>[
-                          Container(
-                            padding: EdgeInsets.all(5),
-                            child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: SizedBox(
-                                      height: 45,
-                                      child: ElevatedButton(
-                                        child: Text(
-                                          "Hủy",
-                                          style: TextStyle(
-                                              color: Colors.black45,
-                                              fontFamily: "SF Medium",
-                                              fontSize: 16),
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          primary: Colors.white,
-                                          textStyle:
-                                              TextStyle(color: Colors.black),
-                                          shadowColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              side: BorderSide(
-                                                  color: Colors.black45,
-                                                  width: 1)),
-                                        ),
-                                        onPressed: () =>
-                                            {Navigator.pop(context)},
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(padding: EdgeInsets.all(7)),
-                                  Expanded(
-                                    child: SizedBox(
-                                      height: 45,
-                                      child: ElevatedButton(
-                                        child: const Text(
-                                          "Đồng ý",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: "SF Medium",
-                                              fontSize: 16),
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          primary: MaterialColors.primary,
-                                          textStyle:
-                                              TextStyle(color: Colors.black),
-                                          shadowColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                          ),
-                                        ),
-                                        onPressed: () => {
-                                          Navigator.pop(context),
-                                          widget.onTap!(widget.product, true),
-                                        },
-                                      ),
-                                    ),
-                                  )
-                                ]),
-                          )
-                        ],
                       ),
-                    );
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: Icon(Icons.delete_outline, color: Colors.grey),
-                  ),
-                )
-              ])),
+                      Padding(padding: EdgeInsets.all(8)),
+                      Expanded(
+                        child: Container(
+                            // width: 100,
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              child: Text(
+                                widget.product.name!,
+                                maxLines: 1,
+                                style: TextStyle(fontFamily: "SF Bold", fontSize: 16, overflow: TextOverflow.ellipsis),
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(top: 5, bottom: 5),
+                              child: Text(
+                                widget.product.packDescription != "" ? widget.product.packDescription! : widget.product.unit!,
+                                style: TextStyle(fontFamily: "SF Regular", fontSize: 15, color: Colors.grey),
+                              ),
+                            ),
+                            Container(
+                              child: Text(
+                                currencyFormatter.format((widget.product.pricePerPack!).toInt()).toString() + "₫",
+                                style: TextStyle(fontFamily: "SF Semibold", fontSize: 16, color: MaterialColors.primary),
+                              ),
+                            ),
+                          ],
+                        )),
+                      )
+                    ],
+                  )),
+            ),
+            InkWell(
+              onTap: () {
+                Dialogs.materialDialog(
+                    dialogShape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    msg: 'Bạn có chắc muốn xóa sản phẩm khỏi thực đơn?',
+                    msgAlign: TextAlign.center,
+                    title: "Xóa sản phẩm",
+                    color: Colors.white,
+                    context: context,
+                    actions: [
+                      IconsOutlineButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        text: 'Hủy',
+                        iconData: Icons.cancel_outlined,
+                        textStyle: TextStyle(color: Colors.grey),
+                        iconColor: Colors.grey,
+                      ),
+                      IconsButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          widget.onTap!(widget.product, true);
+                        },
+                        text: 'Xóa',
+                        iconData: Icons.delete,
+                        color: Colors.red,
+                        textStyle: TextStyle(color: Colors.white),
+                        iconColor: Colors.white,
+                      ),
+                    ]);
+              },
+              child: Container(
+                padding: EdgeInsets.all(10),
+                child: Icon(Icons.delete_outline, color: Colors.grey),
+              ),
+            )
+          ])),
     );
   }
 }

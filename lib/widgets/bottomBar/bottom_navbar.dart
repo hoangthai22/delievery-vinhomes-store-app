@@ -8,7 +8,7 @@ const Map<TabItem, String> tabName = {
   TabItem.home: 'Đơn hàng',
   TabItem.product: 'Sản phẩm',
   TabItem.menu: 'Thực đơn',
-  TabItem.transaction: 'Giao dịch',
+  TabItem.transaction: 'Lịch sử',
   TabItem.account: 'Tài khoản',
 };
 
@@ -16,7 +16,7 @@ const Map<TabItem, IconData> tabIcon = {
   TabItem.home: Icons.shopping_bag_outlined,
   TabItem.product: Icons.fastfood,
   TabItem.menu: Icons.list_alt_sharp,
-  TabItem.transaction: Icons.payment,
+  TabItem.transaction: Icons.history,
   TabItem.account: Icons.account_circle,
 };
 
